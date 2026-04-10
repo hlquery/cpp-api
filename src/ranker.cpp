@@ -1,0 +1,62 @@
+#include <cmath>
+
+#include "hlquery/ranker.h"
+
+namespace hlquery
+{
+static const std::map<std::string, double> DEFAULT_WEIGHTS = {
+     {"popularity_log", 1.15},
+     {"hit_log", 0.95},
+     {"popularity_sqrt", 0.25},
+     {"hit_log_sqrt", 0.15},
+};
+
+double Ranker::ComputeRankSignal(double popularity,
+                                 double hitLog,
+                                 const std::map<std::string, double>* overrides)
+{
+     std::map<std::string, double> weights = DEFAULT_WEIGHTS;
+
+     if (overrides != nullptr)
+     {
+          for (const auto& [key, value] : *overrides)
+          {
+               if (weights.count(key) > 0)
+               {
+                    weights[key] = value;
+               }
+          }
+     }
+
+     return std::log(popularity + 1.0) * weights["popularity_log"] + std::log(hitLog + 1.0) * weights["hit_log"] + std::sqrt(popularity) * weights["popularity_sqrt"] + std::sqrt(hitLog) * weights["hit_log_sqrt"];
+}
+
+void Ranker::AttachRankSort(std::map<std::string, std::string>& params,
+                            const std::string& field,
+                            const std::string& direction)
+{
+     if (params.empty())
+     {
+          params["sort_by"] = field + ":" + direction;
+          return;
+     }
+
+     std::string dir = "desc";
+     if (direction == "asc")
+     {
+          dir = "asc";
+     }
+
+     std::string sort_instruction = field + ":" + dir;
+
+     auto it = params.find("sort_by");
+     if (it != params.end() && !it->second.empty())
+     {
+          it->second += "," + sort_instruction;
+     }
+     else
+     {
+          params["sort_by"] = sort_instruction;
+     }
+}
+}
