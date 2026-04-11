@@ -1,5 +1,16 @@
 <div align="center">
-  <img src="https://docs.hlquery.com/img/hlquery/2.png" alt="hlquery logo" width="200">
+
+**A high-performance search engine built for modern applications**
+
+[![Twitter Follow](https://img.shields.io/twitter/url/https/x.com/hlquery.svg?style=social&label=Follow%20%40hlquery)](https://x.com/hlquery)
+[![Linux Build](https://github.com/hlquery/cpp-api/workflows/Linux%20build/badge.svg)](https://github.com/hlquery/cpp-api/actions)
+[![macOS Build](https://github.com/hlquery/cpp-api/workflows/macOS%20Build/badge.svg)](https://github.com/hlquery/cpp-api/actions)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/hlquery/cpp-api)](https://github.com/hlquery/cpp-api/pulse)
+[![GitHub stars](https://img.shields.io/github/stars/hlquery/cpp-api?style=social)](https://github.com/hlquery/cpp-api/stargazers)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
+[Documentation](https://docs.hlquery.com) • [GitHub](https://github.com/hlquery/cpp-api) • [Discord](https://discord.hlquery.com)
+
 </div>
 
 
