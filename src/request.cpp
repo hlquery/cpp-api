@@ -118,6 +118,13 @@ Response Request::makeHttpRequest(const std::string& method, const std::string& 
      bool use_ssl;
      parseUrl(url, host, port, use_ssl);
 
+#if !defined(HLQUERY_HAS_OPENSSL)
+     if (use_ssl)
+     {
+          throw RequestException("HTTPS requested, but this build of the hlquery C++ client was compiled without OpenSSL support");
+     }
+#endif
+
      std::string path = url;
      if (url.find("://") != std::string::npos)
      {
@@ -276,9 +283,6 @@ Response Request::makeHttpRequest(const std::string& method, const std::string& 
      {
 #ifdef HLQUERY_HAS_OPENSSL
           sent = SSL_write(ssl, request_str.c_str(), request_str.length());
-#else
-          close(sock);
-          throw RequestException("SSL not available but HTTPS URL requested");
 #endif
      }
      else

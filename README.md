@@ -4,7 +4,7 @@
 
 <div align="center">
 
-**A high-performance search engine built for modern applications**
+**A C++ API for a high-performance search engine built for modern applications**
 
 [![Twitter Follow](https://img.shields.io/twitter/url/https/x.com/hlquery.svg?style=social&label=Follow%20%40hlquery)](https://x.com/hlquery)
 [![Linux Build](https://github.com/hlquery/cpp-api/workflows/Linux%20build/badge.svg)](https://github.com/hlquery/cpp-api/actions)
@@ -47,6 +47,19 @@ cd etc/api/cpp
 make
 ```
 
+Build modes:
+
+```bash
+# Auto-detect OpenSSL with pkg-config (default)
+make
+
+# Force HTTP-only build with no OpenSSL dependency
+make OPENSSL=0
+
+# Require OpenSSL and fail fast if it is not available
+make OPENSSL=1
+```
+
 ## Building
 
 ### Using Make
@@ -68,6 +81,10 @@ make clean
 ```
 
 This removes the entire `build/` directory.
+
+On systems where OpenSSL is installed outside the default compiler include path
+(for example Homebrew on macOS), the Makefile now pulls both compiler and linker
+flags from `pkg-config`.
 
 ## Quick Start
 
@@ -193,6 +210,9 @@ std::map<std::string, std::string> options;
 options["tls_verify"] = "false"; // intentionally unsafe
 hlquery::Client client("https://localhost:9200", options);
 ```
+
+If the client is built with `OPENSSL=0`, only `http://` endpoints are supported.
+Using an `https://` URL in that mode raises a `RequestException`.
 
 ### Authentication
 

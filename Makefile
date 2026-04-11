@@ -5,16 +5,29 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -I./include -I./vendor/json
 LDFLAGS = 
+OPENSSL ?= auto
 
 # Build directory
 BUILD_DIR = build
 OBJ_DIR = $(BUILD_DIR)/obj
 BIN_DIR ?= .
 
-# Check for OpenSSL
-ifneq ($(shell pkg-config --exists openssl && echo yes),)
-    CXXFLAGS += -DHLQUERY_HAS_OPENSSL
+# Optional OpenSSL support
+ifeq ($(OPENSSL),1)
+    ifneq ($(shell pkg-config --exists openssl && echo yes),yes)
+        $(error OpenSSL was requested with OPENSSL=1, but pkg-config could not find openssl)
+    endif
+    CXXFLAGS += $(shell pkg-config --cflags openssl) -DHLQUERY_HAS_OPENSSL
     LDFLAGS += $(shell pkg-config --libs openssl)
+else ifeq ($(OPENSSL),auto)
+    ifeq ($(shell pkg-config --exists openssl && echo yes),yes)
+        CXXFLAGS += $(shell pkg-config --cflags openssl) -DHLQUERY_HAS_OPENSSL
+        LDFLAGS += $(shell pkg-config --libs openssl)
+    endif
+else ifeq ($(OPENSSL),0)
+    # Build HTTP-only client without OpenSSL.
+else
+    $(error Unsupported OPENSSL value '$(OPENSSL)'; use OPENSSL=auto, OPENSSL=1, or OPENSSL=0)
 endif
 
 # Source files
