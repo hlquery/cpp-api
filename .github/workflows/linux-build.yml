@@ -1,0 +1,29 @@
+name: Linux build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libssl-dev
+
+      - name: Build
+        run: make
+
+      - name: Verify examples
+        run: |
+          test -f build/libhlqueryclient.a
+          test -x ./basic_usage
+          test -x ./flush
+          test -x ./hits_api_usage
