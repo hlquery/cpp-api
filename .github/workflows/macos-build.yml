@@ -1,0 +1,30 @@
+name: macOS Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew install openssl pkg-config
+
+      - name: Build
+        run: |
+          export PKG_CONFIG_PATH="$(brew --prefix openssl)/lib/pkgconfig"
+          make
+
+      - name: Verify examples
+        run: |
+          test -f build/libhlqueryclient.a
+          test -x ./basic_usage
+          test -x ./flush
+          test -x ./hits_api_usage

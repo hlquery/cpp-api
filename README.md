@@ -1,4 +1,8 @@
 <div align="center">
+  <img src="https://docs.hlquery.com/img/hlquery/2.png" alt="hlquery logo" width="200">
+</div>
+
+<div align="center">
 
 **A high-performance search engine built for modern applications**
 
