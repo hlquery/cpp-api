@@ -23,6 +23,15 @@ A C++ client library for hlquery with modular APIs, authentication support, HTTP
 - nlohmann/json (included in `vendor/json/json.hpp`)
 - OpenSSL (optional, for HTTPS support)
 
+## Installation
+
+Build the client and examples locally:
+
+```bash
+cd etc/api/cpp
+make
+```
+
 ## Building
 
 ### Using Make
@@ -72,6 +81,33 @@ int main() {
         return 1;
     }
     
+    return 0;
+}
+```
+
+## Reduce Text Example
+
+If the `ai_search` module is enabled, you can use `executeRequest()` to summarize a stored document:
+
+```cpp
+#include "hlquery/client.h"
+#include <iostream>
+#include <map>
+
+int main() {
+    hlquery::Client client("http://localhost:9200");
+
+    auto summary = client.executeRequest(
+        "GET",
+        "/modules/ai_search/talk",
+        nullptr,
+        {
+            {"q", "summarize onboarding guide in docs"},
+            {"run", "true"},
+        }
+    );
+
+    std::cout << summary.getRawBody() << std::endl;
     return 0;
 }
 ```
