@@ -5,7 +5,7 @@
 
 # hlquery C++ API Client
 
-A C++ client library for hlquery, designed with a familiar and intuitive API structure.
+A C++ client library for hlquery with modular APIs, authentication support, HTTPS support, and type-safe responses.
 
 ## Features
 
