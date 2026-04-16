@@ -4,16 +4,14 @@
 
 <div align="center">
 
-**A C++ API for a high-performance search engine built for modern applications**
+**A C++ API for a high-performance search engine built for modern applications.**
 
-[![Twitter Follow](https://img.shields.io/twitter/url/https/x.com/hlquery.svg?style=social&label=Follow%20%40hlquery)](https://x.com/hlquery)
+[![Follow hlquery](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white)](https://x.com/hlquery)
 [![Linux Build](https://github.com/hlquery/cpp-api/workflows/Linux%20build/badge.svg)](https://github.com/hlquery/cpp-api/actions)
 [![macOS Build](https://github.com/hlquery/cpp-api/workflows/macOS%20Build/badge.svg)](https://github.com/hlquery/cpp-api/actions)
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/hlquery/cpp-api)](https://github.com/hlquery/cpp-api/pulse)
 [![GitHub stars](https://img.shields.io/github/stars/hlquery/cpp-api?style=social)](https://github.com/hlquery/cpp-api/stargazers)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-
-[Documentation](https://docs.hlquery.com) • [GitHub](https://github.com/hlquery/cpp-api) • [Discord](https://discord.hlquery.com)
 
 </div>
 
@@ -22,7 +20,7 @@
 
 A C++ client library for hlquery with modular APIs, authentication support, HTTPS support, and type-safe responses.
 
-## Features
+### Features
 
 -  **Modular Architecture**: Clean separation of concerns with organized classes
 -  **Intuitive API**: Familiar and easy-to-use structure
@@ -32,13 +30,13 @@ A C++ client library for hlquery with modular APIs, authentication support, HTTP
 -  **Comprehensive Validation**: Input validation for all operations
 -  **Minimal Dependencies**: Uses nlohmann/json (included) and standard C++ libraries
 
-## Requirements
+### Requirements
 
 - C++17 or later
 - nlohmann/json (included in `vendor/json/json.hpp`)
 - OpenSSL (optional, for HTTPS support)
 
-## Installation
+### Installation
 
 Build the client and examples locally:
 
@@ -66,8 +64,6 @@ $ make OPENSSL=0
 # Require OpenSSL and fail fast if it is not available
 $ make OPENSSL=1
 ```
-
-## Building
 
 ### Using Make
 
@@ -106,7 +102,7 @@ On systems where OpenSSL is installed outside the default compiler include path
 (for example Homebrew on macOS), the Makefile now pulls both compiler and linker
 flags from `pkg-config`.
 
-## Quick Start
+### Quick Start
 
 ```cpp
 #include "hlquery/client.h"
@@ -137,34 +133,6 @@ int main() {
 }
 ```
 
-## Reduce Text Example
-
-If the `ai_search` module is enabled, you can use `executeRequest()` to summarize a stored document:
-
-```cpp
-#include "hlquery/client.h"
-#include <iostream>
-#include <map>
-
-int main() {
-    hlquery::Client client("http://localhost:9200");
-
-    auto summary = client.executeRequest(
-        "GET",
-        "/modules/ai_search/talk",
-        nullptr,
-        {
-            {"q", "summarize onboarding guide in docs"},
-            {"run", "true"},
-        }
-    );
-
-    std::cout << summary.getRawBody() << std::endl;
-    return 0;
-}
-```
-
-
 ### Authentication
 
 ```cpp
@@ -176,42 +144,6 @@ client.setAuthToken("your_api_key", "api-key");
 
 // Clear authentication
 client.clearAuth();
-```
-
-### Collections API
-
-```cpp
-// List collections
-auto collections = client.listCollections(0, 10);
-
-// Get collection
-auto collection = client.getCollection("my_collection");
-
-// Get collection fields
-auto fields = client.getCollectionFields("my_collection");
-
-// Using Collections object directly
-auto collections_api = client.collections();
-auto result = collections_api->create("new_collection", schema);
-```
-
-### Documents API
-
-```cpp
-// List documents
-std::map<std::string, std::string> params;
-params["offset"] = "0";
-params["limit"] = "10";
-auto documents = client.listDocuments("collection", params);
-
-// Get document
-auto document = client.getDocument("collection", "doc_id");
-
-// Add document
-nlohmann::json doc;
-doc["id"] = "doc_1";
-doc["title"] = "Test";
-auto result = client.documents()->add("collection", doc);
 ```
 
 ### Search API
@@ -270,38 +202,3 @@ nlohmann::json vector_body = {
 auto advanced = client.executeRequest("POST", "/collections/collection/vector_search", vector_body);
 ```
 
-### Ranking helpers
-
-`hlquery::Ranker` exposes helpers to recompute `rank_signal` and attach a `sort_by` clause so you can boost by popularity/hit metrics.
-
-```cpp
-std::map<std::string, std::string> params;
-params["q"] = "guide";
-double signal = Ranker::ComputeRankSignal(popularity, hit_log);
-params["rank_signal"] = std::to_string(signal);
-Ranker::AttachRankSort(params);
-auto results = client.search("collection", params);
-```
-
-## Response Handling
-
-All methods return a `Response` object:
-
-```cpp
-auto response = client.health();
-
-// Check status
-if (response.isSuccess()) {
-    auto body = response.getBody();
-    // Process body...
-}
-
-// Get error
-if (response.isError()) {
-    std::string error = response.getError();
-    std::cerr << "Error: " << error << std::endl;
-}
-
-// Access JSON body
-nlohmann::json body = response.getBody();
-```
