@@ -18,7 +18,7 @@
 </div>
 
 
-# hlquery C++ API Client
+### hlquery C++ API Client
 
 A C++ client library for hlquery with modular APIs, authentication support, HTTPS support, and type-safe responses.
 
@@ -43,21 +43,28 @@ A C++ client library for hlquery with modular APIs, authentication support, HTTP
 Build the client and examples locally:
 
 ```bash
-cd etc/api/cpp
-make
+$ cd cpp-api
+$ make
+```
+
+On FreeBSD, use GNU make:
+
+```bash
+$ cd cpp-api
+$ gmake
 ```
 
 Build modes:
 
 ```bash
 # Auto-detect OpenSSL with pkg-config (default)
-make
+$ make
 
 # Force HTTP-only build with no OpenSSL dependency
-make OPENSSL=0
+$ make OPENSSL=0
 
 # Require OpenSSL and fail fast if it is not available
-make OPENSSL=1
+$ make OPENSSL=1
 ```
 
 ## Building
@@ -65,8 +72,15 @@ make OPENSSL=1
 ### Using Make
 
 ```bash
-cd etc/api/cpp
-make
+$ cd cpp-api
+$ make
+```
+
+FreeBSD:
+
+```bash
+$ cd cpp-api
+$ gmake
 ```
 
 This will build:
@@ -77,7 +91,13 @@ All build artifacts are placed in the `build/` directory.
 
 To clean build artifacts:
 ```bash
-make clean
+$ make clean
+```
+
+On FreeBSD:
+
+```bash
+$ gmake clean
 ```
 
 This removes the entire `build/` directory.
@@ -144,75 +164,6 @@ int main() {
 }
 ```
 
-## Directory Structure
-
-```
-cpp/
-├── include/
-│   └── hlquery/
-│       ├── client.h
-│       ├── request.h
-│       ├── response.h
-│       ├── exceptions.h
-│       ├── collections.h
-│       ├── documents.h
-│       ├── search.h
-│       └── utils/
-│           ├── Config.h
-│           ├── Validator.h
-│           └── Url.h
-├── src/
-│   ├── client.cpp
-│   ├── request.cpp
-│   ├── response.cpp
-│   ├── collections.cpp
-│   ├── documents.cpp
-│   ├── search.cpp
-│   └── utils/
-│       ├── Config.cpp
-│       ├── Validator.cpp
-│       └── Url.cpp
-├── examples/
-│   └── basic_usage.cpp
-├── build/
-│   ├── libhlqueryclient.a
-│   ├── basic_usage
-│   └── obj/
-├── Makefile
-└── README.md
-```
-
-## API Usage
-
-### Client Initialization
-
-```cpp
-// Basic initialization
-hlquery::Client client("http://localhost:9200");
-
-// With options
-std::map<std::string, std::string> options;
-options["timeout"] = "60";
-options["token"] = "your_token";
-options["auth_method"] = "bearer";
-options["tls_verify"] = "true";
-hlquery::Client client("http://localhost:9200", options);
-```
-
-### TLS Verification
-
-When OpenSSL is available and HTTPS is used, the client verifies TLS certificates
-and the hostname by default. For local/dev environments where this is not
-possible, you can explicitly opt out:
-
-```cpp
-std::map<std::string, std::string> options;
-options["tls_verify"] = "false"; // intentionally unsafe
-hlquery::Client client("https://localhost:9200", options);
-```
-
-If the client is built with `OPENSSL=0`, only `http://` endpoints are supported.
-Using an `https://` URL in that mode raises a `RequestException`.
 
 ### Authentication
 
@@ -354,28 +305,3 @@ if (response.isError()) {
 // Access JSON body
 nlohmann::json body = response.getBody();
 ```
-
-## Error Handling
-
-The client throws exceptions for errors:
-
-```cpp
-try {
-    auto result = client.search("collection", params);
-} catch (const hlquery::RequestException& e) {
-    std::cerr << "Request failed: " << e.what() << std::endl;
-    std::cerr << "Status: " << e.getStatusCode() << std::endl;
-} catch (const hlquery::AuthenticationException& e) {
-    std::cerr << "Auth failed: " << e.what() << std::endl;
-} catch (const hlquery::ValidationException& e) {
-    std::cerr << "Validation failed: " << e.what() << std::endl;
-} catch (const std::exception& e) {
-    std::cerr << "Error: " << e.what() << std::endl;
-}
-```
-
-## License
-
-Copyright (C) 2021-2026, Carlos F. Ferry <carlos.ferry@gmail.com>
-
-This software is licensed under the BSD-3-Clause License. See the LICENSE file for details.
