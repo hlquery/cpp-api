@@ -10,7 +10,7 @@
 [![Linux Build](https://github.com/hlquery/cpp-api/workflows/Linux%20build/badge.svg)](https://github.com/hlquery/cpp-api/actions)
 [![macOS Build](https://github.com/hlquery/cpp-api/workflows/macOS%20Build/badge.svg)](https://github.com/hlquery/cpp-api/actions)
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/hlquery/cpp-api)](https://github.com/hlquery/cpp-api/pulse)
-[![GitHub stars](https://img.shields.io/github/stars/hlquery/cpp-api?style=social)](https://github.com/hlquery/cpp-api/stargazers)
+[![cpp-api](https://img.shields.io/badge/GitHub-cpp--api-181717?logo=github&logoColor=white)](https://github.com/hlquery/cpp-api/stargazers)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 </div>
@@ -201,4 +201,3 @@ nlohmann::json vector_body = {
 };
 auto advanced = client.executeRequest("POST", "/collections/collection/vector_search", vector_body);
 ```
-
