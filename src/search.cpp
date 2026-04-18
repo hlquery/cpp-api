@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <stdexcept>
 
 #include "hlquery/search.h"
 #include "hlquery/utils/Url.h"
@@ -74,6 +75,30 @@ Response Search::search(const std::string& collection_name, const std::map<std::
                }
           }
      }
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/search";
+     std::string query_string = buildQueryString(query_params);
+
+     if (!query_string.empty())
+     {
+          path += "?" + query_string;
+     }
+
+     return request_->execute("GET", path);
+}
+
+Response Search::sql(const std::string& collection_name, const std::string& sql,
+                     const std::map<std::string, std::string>& params)
+{
+     utils::validateCollectionName(collection_name);
+
+     if (sql.empty())
+     {
+          throw std::invalid_argument("SQL query must be a non-empty string");
+     }
+
+     std::map<std::string, std::string> query_params = params;
+     query_params["sql"] = sql;
 
      std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/search";
      std::string query_string = buildQueryString(query_params);

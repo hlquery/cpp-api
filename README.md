@@ -26,6 +26,7 @@ A C++ client library for hlquery with modular APIs, authentication support, HTTP
 -  **Intuitive API**: Familiar and easy-to-use structure
 -  **Authentication Support**: Bearer token and X-API-Key authentication
 -  **HTTPS Support**: Optional OpenSSL support for secure connections
+-  **SQL Support**: Collection-bound SQL selects and top-level `/sql` execution
 -  **Type-safe Responses**: Response objects with helper methods
 -  **Comprehensive Validation**: Input validation for all operations
 -  **Minimal Dependencies**: Uses nlohmann/json (included) and standard C++ libraries
@@ -184,6 +185,19 @@ params["query_by"] = "title,content";
 params["filter_by"] = "price:>100&&category:electronics";
 auto filtered_results = client.search("collection", params);
 
+// SQL search
+auto sql_results = client.sqlSearch(
+    "collection",
+    "SELECT id, title, price FROM collection ORDER BY price DESC LIMIT 5;"
+);
+std::cout << sql_results.getBody().dump(2) << std::endl;
+
+// Top-level SQL
+auto rows = client.sql("SHOW COLLECTIONS;");
+auto insert = client.execSql(
+    "INSERT INTO collection (id, title, price) VALUES ('sku-9', 'Camp Stove', 89);"
+);
+
 // Vector search
 std::map<std::string, std::string> vector_params;
 vector_params["vector_query"] = "[0.1,0.2,0.3]";
@@ -200,4 +214,58 @@ nlohmann::json vector_body = {
     {"radius", 1.0}
 };
 auto advanced = client.executeRequest("POST", "/collections/collection/vector_search", vector_body);
+```
+
+### SQL
+
+Quick SQL example:
+
+```cpp
+#include "hlquery/client.h"
+#include <iostream>
+
+int main()
+{
+    hlquery::Client client("http://localhost:9200");
+
+    auto response = client.sqlSearch(
+        "products",
+        "SELECT id, title, price FROM products ORDER BY price DESC LIMIT 5;"
+    );
+
+    if (!response.isSuccess())
+    {
+        std::cerr << response.getError() << std::endl;
+        return 1;
+    }
+
+    std::cout << response.getBody().dump(2) << std::endl;
+    return 0;
+}
+```
+
+Basic SQL example:
+
+```cpp
+hlquery::Client client("http://localhost:9200");
+
+auto response = client.sqlSearch(
+    "products",
+    "SELECT id, title, price FROM products ORDER BY price DESC LIMIT 5;"
+);
+
+if (response.isSuccess())
+{
+    std::cout << response.getBody().dump(2) << std::endl;
+}
+```
+
+Top-level SQL execution:
+
+```cpp
+auto rows = client.sql("SHOW COLLECTIONS;");
+
+auto insert = client.execSql(
+    "INSERT INTO products (id, title, price) VALUES ('sku-9', 'Camp Stove', 89);"
+);
 ```

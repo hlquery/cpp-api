@@ -161,6 +161,36 @@ Response Client::search(const std::string& collection_name, const std::map<std::
      return search_->search(collection_name, params);
 }
 
+Response Client::sqlSearch(const std::string& collection_name, const std::string& sql,
+                           const std::map<std::string, std::string>& params)
+{
+     return search_->sql(collection_name, sql, params);
+}
+
+Response Client::sql(const std::string& sql, const std::map<std::string, std::string>& query_params)
+{
+     if (sql.empty())
+     {
+          throw std::invalid_argument("SQL query must be a non-empty string");
+     }
+
+     std::map<std::string, std::string> params = query_params;
+     params["sql"] = sql;
+     return request_->execute("GET", "/sql", nullptr, params);
+}
+
+Response Client::execSql(const std::string& sql)
+{
+     if (sql.empty())
+     {
+          throw std::invalid_argument("SQL query must be a non-empty string");
+     }
+
+     nlohmann::json body;
+     body["exec"] = sql;
+     return request_->execute("POST", "/sql", body);
+}
+
 Response Client::vectorSearch(const std::string& collection_name, const std::map<std::string, std::string>& params)
 {
      return search_->vectorSearch(collection_name, params);

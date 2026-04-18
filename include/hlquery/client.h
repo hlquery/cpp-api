@@ -68,6 +68,10 @@ class Client
 
      std::shared_ptr<Search> searchApi();
      Response search(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response sqlSearch(const std::string& collection_name, const std::string& sql,
+                        const std::map<std::string, std::string>& params = {});
+     Response sql(const std::string& sql, const std::map<std::string, std::string>& query_params = {});
+     Response execSql(const std::string& sql);
      Response vectorSearch(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
 
      /* Execute arbitrary request */
