@@ -45,9 +45,21 @@ std::string Search::buildQueryString(const std::map<std::string, std::string>& p
 Response Search::search(const std::string& collection_name, const std::map<std::string, std::string>& params)
 {
      utils::validateCollectionName(collection_name);
-     utils::validateSearchParams(params);
-
      std::map<std::string, std::string> query_params = params;
+
+     /* Keep parity with other client libraries that expose "like" as the text query alias. */
+
+     if (query_params.find("q") == query_params.end())
+     {
+          const auto like_it = query_params.find("like");
+          if (like_it != query_params.end())
+          {
+               query_params["q"] = like_it->second;
+               query_params.erase(like_it);
+          }
+     }
+
+     utils::validateSearchParams(query_params);
 
      /* Auto-detect searchable fields if query_by not specified */
 

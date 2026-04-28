@@ -113,17 +113,27 @@ int main() {
     try {
         // Initialize client
         hlquery::Client client("http://localhost:9200");
+
+        auto collections = client.collections();
+        auto documents = client.documents();
+        auto search = client.searchApi();
         
         // Health check
         auto health = client.health();
         std::cout << "Status: " << health.getStatusCode() << std::endl;
         
         // List collections
-        auto collections = client.listCollections(0, 10);
-        if (collections.isSuccess()) {
-            auto body = collections.getBody();
+        auto list = collections->list(0, 10);
+        if (list.isSuccess()) {
+            auto body = list.getBody();
             // Process collections...
         }
+
+        auto results = search->search("products", {
+            {"like", "laptop"},
+            {"query_by", "title,content"},
+            {"limit", "10"}
+        });
         
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
@@ -150,43 +160,45 @@ client.clearAuth();
 ### Search API
 
 ```cpp
-// Simple search
+auto search = client.searchApi();
+
+// Simple search. "like" is accepted as an alias for "q".
 std::map<std::string, std::string> params;
-params["q"] = "test";
+params["like"] = "test";
 params["query_by"] = "title,content";
 params["limit"] = "10";
-auto results = client.search("collection", params);
+auto results = search->search("collection", params);
 
 // Supported query semantics
 // Field-specific search
-params["q"] = "title:laptop";
-auto field_results = client.search("collection", params);
+params["like"] = "title:laptop";
+auto field_results = search->search("collection", params);
 
 // Boolean OR query
-params["q"] = "title:laptop OR title:notebook";
-auto or_results = client.search("collection", params);
+params["like"] = "title:laptop OR title:notebook";
+auto or_results = search->search("collection", params);
 
 // Wildcard search
-params["q"] = "laptop*";
-auto wildcard_results = client.search("collection", params);
+params["like"] = "laptop*";
+auto wildcard_results = search->search("collection", params);
 
 // NOT query
-params["q"] = "title:laptop NOT title:refurbished";
-auto not_results = client.search("collection", params);
+params["like"] = "title:laptop NOT title:refurbished";
+auto not_results = search->search("collection", params);
 
 // Phrase query
-params["q"] = "\"wireless keyboard\"";
+params["like"] = "\"wireless keyboard\"";
 params["query_by"] = "title";
-auto phrase_results = client.search("collection", params);
+auto phrase_results = search->search("collection", params);
 
 // Filter operators belong in filter_by
-params["q"] = "*";
+params["like"] = "*";
 params["query_by"] = "title,content";
 params["filter_by"] = "price:>100&&category:electronics";
-auto filtered_results = client.search("collection", params);
+auto filtered_results = search->search("collection", params);
 
 // SQL search
-auto sql_results = client.sqlSearch(
+auto sql_results = search->sql(
     "collection",
     "SELECT id, title, price FROM collection ORDER BY price DESC LIMIT 5;"
 );
@@ -214,6 +226,42 @@ nlohmann::json vector_body = {
     {"radius", 1.0}
 };
 auto advanced = client.executeRequest("POST", "/collections/collection/vector_search", vector_body);
+```
+
+### Collections And Documents
+
+```cpp
+auto collections = client.collections();
+auto documents = client.documents();
+
+nlohmann::json schema = {
+    {"fields", nlohmann::json::array({
+        {{"name", "title"}, {"type", "string"}},
+        {{"name", "content"}, {"type", "string"}},
+        {{"name", "price"}, {"type", "float"}}
+    })}
+};
+
+auto created = collections->create("products", schema);
+auto updated = collections->update("products", {
+    {"add_fields", nlohmann::json::array({
+        {{"name", "brand"}, {"type", "string"}}
+    })}
+});
+
+auto added = documents->add("products", {
+    {"id", "sku-1"},
+    {"title", "Laptop Computer"},
+    {"content", "High-performance laptop with 16GB RAM"},
+    {"price", 1299.0}
+});
+
+auto changed = documents->update("products", "sku-1", {
+    {"price", 1199.0},
+    {"brand", "hlquery"}
+});
+
+auto removed = documents->remove("products", "sku-1");
 ```
 
 ### SQL

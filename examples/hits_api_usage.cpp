@@ -18,7 +18,7 @@ int main()
           hlquery::Client client("http://localhost:9200");
 
           std::map<std::string, std::string> params = {
-               {"q", "laptop"},
+               {"like", "laptop"},
                {"query_by", "title,description"},
                {"per_page", "5"}};
 
