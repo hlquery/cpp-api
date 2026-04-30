@@ -11,6 +11,7 @@
  */
 
 #include <sstream>
+#include <stdexcept>
 
 #include "hlquery/collections.h"
 #include "hlquery/utils/Url.h"
@@ -21,6 +22,25 @@ namespace hlquery
 
 Collections::Collections(std::shared_ptr<Request> request) : request_(request)
 {
+}
+
+std::string Collections::buildQueryString(const std::map<std::string, std::string>& params) const
+{
+     std::ostringstream query;
+     bool first = true;
+
+     for (const auto& param : params)
+     {
+          if (!first)
+          {
+               query << "&";
+          }
+
+          query << utils::urlEncode(param.first) << "=" << utils::urlEncode(param.second);
+          first = false;
+     }
+
+     return query.str();
 }
 
 Response Collections::list(int offset, int limit)
@@ -181,6 +201,110 @@ Response Collections::getFields(const std::string& name)
      result["sortable_fields"] = body.value("sortable_fields", nlohmann::json::array());
 
      return Response(200, result);
+}
+
+Response Collections::search(const std::string& name, const std::map<std::string, std::string>& params)
+{
+     utils::validateCollectionName(name);
+     std::map<std::string, std::string> query_params = params;
+
+     if (query_params.find("q") == query_params.end())
+     {
+          const auto like_it = query_params.find("like");
+          if (like_it != query_params.end())
+          {
+               query_params["q"] = like_it->second;
+               query_params.erase(like_it);
+          }
+     }
+
+     utils::validateSearchParams(query_params);
+
+     if (query_params.find("q") != query_params.end() &&
+         query_params.find("query_by") == query_params.end() &&
+         !query_params["q"].empty())
+     {
+          Response collection = get(name);
+          if (collection.getStatusCode() == 200)
+          {
+               nlohmann::json body = collection.getBody();
+               if (body.contains("searchable_fields") && body["searchable_fields"].is_array() &&
+                   !body["searchable_fields"].empty())
+               {
+                    std::ostringstream fields;
+                    bool first = true;
+                    for (const auto& field : body["searchable_fields"])
+                    {
+                         if (!first)
+                         {
+                              fields << ",";
+                         }
+                         fields << field.get<std::string>();
+                         first = false;
+                    }
+                    query_params["query_by"] = fields.str();
+               }
+          }
+     }
+
+     std::string path = "/collections/" + utils::urlEncode(name) + "/documents/search";
+     std::string query_string = buildQueryString(query_params);
+
+     if (!query_string.empty())
+     {
+          path += "?" + query_string;
+     }
+
+     return request_->execute("GET", path);
+}
+
+SearchResult Collections::searchStructured(const std::string& name, const std::map<std::string, std::string>& params)
+{
+     return SearchResult(search(name, params));
+}
+
+Response Collections::sql(const std::string& name, const std::string& sql,
+                          const std::map<std::string, std::string>& params)
+{
+     utils::validateCollectionName(name);
+
+     if (sql.empty())
+     {
+          throw std::invalid_argument("SQL query must be a non-empty string");
+     }
+
+     std::map<std::string, std::string> query_params = params;
+     query_params["sql"] = sql;
+
+     std::string path = "/collections/" + utils::urlEncode(name) + "/documents/search";
+     std::string query_string = buildQueryString(query_params);
+
+     if (!query_string.empty())
+     {
+          path += "?" + query_string;
+     }
+
+     return request_->execute("GET", path);
+}
+
+Response Collections::vectorSearch(const std::string& name, const std::map<std::string, std::string>& params)
+{
+     utils::validateCollectionName(name);
+
+     std::string path = "/collections/" + utils::urlEncode(name) + "/vector_search";
+     std::string query_string = buildQueryString(params);
+
+     if (!query_string.empty())
+     {
+          path += "?" + query_string;
+     }
+
+     return request_->execute("GET", path);
+}
+
+SearchResult Collections::vectorSearchStructured(const std::string& name, const std::map<std::string, std::string>& params)
+{
+     return SearchResult(vectorSearch(name, params));
 }
 
 }

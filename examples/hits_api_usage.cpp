@@ -22,9 +22,9 @@ int main()
                {"query_by", "title,description"},
                {"per_page", "5"}};
 
-          /* Use the structured Hits API */
+          /* Use the structured Hits API through the collection handle */
 
-          auto search_result = client.searchApi()->searchStructured("products", params);
+          auto search_result = client.collections()->searchStructured("products", params);
 
           std::cout << "Search found " << search_result.getFoundCount() << " results" << std::endl;
           std::cout << "Search time: " << search_result.getSearchTime() << "ms" << std::endl;

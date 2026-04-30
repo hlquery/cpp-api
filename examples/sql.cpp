@@ -37,7 +37,7 @@ int main()
                                                    {"price", 189},
                                                });
 
-          auto select = client.sqlSearch(
+          auto select = client.collections()->sql(
               collection_name,
               "SELECT id, title, price FROM " + collection_name + " ORDER BY price DESC LIMIT 5;");
           std::cout << "Collection SQL SELECT:" << std::endl;

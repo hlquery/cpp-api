@@ -116,7 +116,6 @@ int main() {
 
         auto collections = client.collections();
         auto documents = client.documents();
-        auto search = client.searchApi();
         
         // Health check
         auto health = client.health();
@@ -129,7 +128,7 @@ int main() {
             // Process collections...
         }
 
-        auto results = search->search("products", {
+        auto results = collections->search("products", {
             {"like", "laptop"},
             {"query_by", "title,content"},
             {"limit", "10"}
@@ -160,45 +159,45 @@ client.clearAuth();
 ### Search API
 
 ```cpp
-auto search = client.searchApi();
+auto collections = client.collections();
 
 // Simple search. "like" is accepted as an alias for "q".
 std::map<std::string, std::string> params;
 params["like"] = "test";
 params["query_by"] = "title,content";
 params["limit"] = "10";
-auto results = search->search("collection", params);
+auto results = collections->search("collection", params);
 
 // Supported query semantics
 // Field-specific search
 params["like"] = "title:laptop";
-auto field_results = search->search("collection", params);
+auto field_results = collections->search("collection", params);
 
 // Boolean OR query
 params["like"] = "title:laptop OR title:notebook";
-auto or_results = search->search("collection", params);
+auto or_results = collections->search("collection", params);
 
 // Wildcard search
 params["like"] = "laptop*";
-auto wildcard_results = search->search("collection", params);
+auto wildcard_results = collections->search("collection", params);
 
 // NOT query
 params["like"] = "title:laptop NOT title:refurbished";
-auto not_results = search->search("collection", params);
+auto not_results = collections->search("collection", params);
 
 // Phrase query
 params["like"] = "\"wireless keyboard\"";
 params["query_by"] = "title";
-auto phrase_results = search->search("collection", params);
+auto phrase_results = collections->search("collection", params);
 
 // Filter operators belong in filter_by
 params["like"] = "*";
 params["query_by"] = "title,content";
 params["filter_by"] = "price:>100&&category:electronics";
-auto filtered_results = search->search("collection", params);
+auto filtered_results = collections->search("collection", params);
 
 // SQL search
-auto sql_results = search->sql(
+auto sql_results = collections->sql(
     "collection",
     "SELECT id, title, price FROM collection ORDER BY price DESC LIMIT 5;"
 );
@@ -210,11 +209,24 @@ auto insert = client.execSql(
     "INSERT INTO collection (id, title, price) VALUES ('sku-9', 'Camp Stove', 89);"
 );
 
+// Multi-search stays at the client level because it spans multiple collections/queries.
+nlohmann::json multi_a = {
+    {"collection", "products"},
+    {"q", "laptop"},
+    {"query_by", "title,content"}
+};
+nlohmann::json multi_b = {
+    {"collection", "products"},
+    {"q", "keyboard"},
+    {"query_by", "title,content"}
+};
+auto multi = client.multiSearch({multi_a, multi_b});
+
 // Vector search
 std::map<std::string, std::string> vector_params;
 vector_params["vector_query"] = "[0.1,0.2,0.3]";
 vector_params["limit"] = "5";
-auto results = client.vectorSearch("collection", vector_params);
+auto vector_results = collections->vectorSearch("collection", vector_params);
 
 // Advanced vector search (POST JSON body)
 nlohmann::json vector_body = {
@@ -227,6 +239,22 @@ nlohmann::json vector_body = {
 };
 auto advanced = client.executeRequest("POST", "/collections/collection/vector_search", vector_body);
 ```
+
+Preferred structure:
+
+```cpp
+auto collections = client.collections();
+auto result = collections->search("products", {{"like", "laptop"}});
+```
+
+Compatibility note:
+
+- `client.searchApi()`
+- `client.search(...)`
+- `client.sqlSearch(...)`
+- `client.vectorSearch(...)`
+
+still exist for now, but they are compatibility shims. New code should prefer `client.collections()->...` for collection-scoped search operations.
 
 ### Collections And Documents
 
@@ -275,8 +303,9 @@ Quick SQL example:
 int main()
 {
     hlquery::Client client("http://localhost:9200");
+    auto collections = client.collections();
 
-    auto response = client.sqlSearch(
+    auto response = collections->sql(
         "products",
         "SELECT id, title, price FROM products ORDER BY price DESC LIMIT 5;"
     );
@@ -296,8 +325,9 @@ Basic SQL example:
 
 ```cpp
 hlquery::Client client("http://localhost:9200");
+auto collections = client.collections();
 
-auto response = client.sqlSearch(
+auto response = collections->sql(
     "products",
     "SELECT id, title, price FROM products ORDER BY price DESC LIMIT 5;"
 );

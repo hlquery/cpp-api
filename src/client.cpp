@@ -158,13 +158,13 @@ std::shared_ptr<Search> Client::searchApi()
 
 Response Client::search(const std::string& collection_name, const std::map<std::string, std::string>& params)
 {
-     return search_->search(collection_name, params);
+     return collections_->search(collection_name, params);
 }
 
 Response Client::sqlSearch(const std::string& collection_name, const std::string& sql,
                            const std::map<std::string, std::string>& params)
 {
-     return search_->sql(collection_name, sql, params);
+     return collections_->sql(collection_name, sql, params);
 }
 
 Response Client::sql(const std::string& sql, const std::map<std::string, std::string>& query_params)
@@ -193,7 +193,17 @@ Response Client::execSql(const std::string& sql)
 
 Response Client::vectorSearch(const std::string& collection_name, const std::map<std::string, std::string>& params)
 {
-     return search_->vectorSearch(collection_name, params);
+     return collections_->vectorSearch(collection_name, params);
+}
+
+Response Client::multiSearch(const std::vector<nlohmann::json>& searches)
+{
+     return search_->multiSearch(searches);
+}
+
+MultiSearchResult Client::multiSearchStructured(const std::vector<nlohmann::json>& searches)
+{
+     return search_->multiSearchStructured(searches);
 }
 
 Response Client::executeRequest(const std::string& method, const std::string& path,

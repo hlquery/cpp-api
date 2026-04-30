@@ -13,10 +13,13 @@
 #pragma once
 
 #include <memory>
+#include <map>
 #include <string>
+#include <vector>
 
 #include "request.h"
 #include "response.h"
+#include "searchresult.h"
 
 namespace hlquery
 {
@@ -33,10 +36,18 @@ class Collections
      Response remove(const std::string& name);
      Response update(const std::string& name, const nlohmann::json& schema);
      Response getFields(const std::string& name);
+     Response search(const std::string& name, const std::map<std::string, std::string>& params = {});
+     SearchResult searchStructured(const std::string& name, const std::map<std::string, std::string>& params = {});
+     Response sql(const std::string& name, const std::string& sql,
+                  const std::map<std::string, std::string>& params = {});
+     Response vectorSearch(const std::string& name, const std::map<std::string, std::string>& params = {});
+     SearchResult vectorSearchStructured(const std::string& name, const std::map<std::string, std::string>& params = {});
 
    private:
 
      std::shared_ptr<Request> request_;
+
+     std::string buildQueryString(const std::map<std::string, std::string>& params) const;
 };
 
 }

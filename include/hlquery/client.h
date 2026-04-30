@@ -66,13 +66,19 @@ class Client
 
      /* Search API */
 
+     [[deprecated("Use client.collections()->search(...) for collection-scoped searches.")]]
      std::shared_ptr<Search> searchApi();
+     [[deprecated("Use client.collections()->search(...) for collection-scoped searches.")]]
      Response search(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     [[deprecated("Use client.collections()->sql(...) for collection-scoped SQL searches.")]]
      Response sqlSearch(const std::string& collection_name, const std::string& sql,
                         const std::map<std::string, std::string>& params = {});
      Response sql(const std::string& sql, const std::map<std::string, std::string>& query_params = {});
      Response execSql(const std::string& sql);
+     [[deprecated("Use client.collections()->vectorSearch(...) for collection-scoped vector searches.")]]
      Response vectorSearch(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response multiSearch(const std::vector<nlohmann::json>& searches);
+     MultiSearchResult multiSearchStructured(const std::vector<nlohmann::json>& searches);
 
      /* Execute arbitrary request */
 
