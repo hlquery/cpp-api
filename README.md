@@ -10,7 +10,7 @@
 [![Linux Build](https://github.com/hlquery/cpp-api/workflows/Linux%20build/badge.svg)](https://github.com/hlquery/cpp-api/actions)
 [![macOS Build](https://github.com/hlquery/cpp-api/workflows/macOS%20Build/badge.svg)](https://github.com/hlquery/cpp-api/actions)
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/hlquery/cpp-api)](https://github.com/hlquery/cpp-api/pulse)
-[![cpp-api](https://img.shields.io/badge/GitHub-cpp--api-181717?logo=github&logoColor=white)](https://github.com/hlquery/cpp-api/stargazers)
+[![GitHub](https://img.shields.io/badge/GitHub-hlquery-blue?logo=github&logoColor=white)](https://github.com/hlquery/hlquery/stargazers)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 </div>
@@ -19,23 +19,6 @@
 ### hlquery C++ API Client
 
 A C++ client library for hlquery with modular APIs, authentication support, HTTPS support, and type-safe responses.
-
-### Features
-
--  **Modular Architecture**: Clean separation of concerns with organized classes
--  **Intuitive API**: Familiar and easy-to-use structure
--  **Authentication Support**: Bearer token and X-API-Key authentication
--  **HTTPS Support**: Optional OpenSSL support for secure connections
--  **SQL Support**: Collection-bound SQL selects and top-level `/sql` execution
--  **Type-safe Responses**: Response objects with helper methods
--  **Comprehensive Validation**: Input validation for all operations
--  **Minimal Dependencies**: Uses nlohmann/json (included) and standard C++ libraries
-
-### Requirements
-
-- C++17 or later
-- nlohmann/json (included in `vendor/json/json.hpp`)
-- OpenSSL (optional, for HTTPS support)
 
 ### Installation
 
