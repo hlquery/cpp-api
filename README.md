@@ -18,7 +18,7 @@
 
 ### hlquery C++ API Client
 
-A C++ client library for hlquery with modular APIs, authentication support, HTTPS support, and type-safe responses.
+A C++ client library for hlquery with modular APIs, authentication support, HTTPS support, type-safe responses, and basic SAM search helpers.
 
 ### Installation
 
@@ -221,6 +221,10 @@ nlohmann::json vector_body = {
     {"radius", 1.0}
 };
 auto advanced = client.executeRequest("POST", "/collections/collection/vector_search", vector_body);
+
+// SAM search
+auto sam = client.samSearch("collection", "wireless keyboard");
+auto sam_all = client.samSearchAll("guide", {{"limit", "5"}});
 ```
 
 Preferred structure:
@@ -238,6 +242,15 @@ Compatibility note:
 - `client.vectorSearch(...)`
 
 still exist for now, but they are compatibility shims. New code should prefer `client.collections()->...` for collection-scoped search operations.
+
+### SAM Search
+
+SAM search calls `/sam/search` directly and is useful for broader intent-style lookup.
+
+```cpp
+auto sam = client.samSearch("products", "nineteen");
+auto sam_all = client.samSearchAll("benchmark", {{"distributed", "on"}, {"limit", "10"}});
+```
 
 ### Collections And Documents
 

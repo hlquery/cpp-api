@@ -161,6 +161,17 @@ Response Client::search(const std::string& collection_name, const std::map<std::
      return collections_->search(collection_name, params);
 }
 
+Response Client::samSearch(const std::string& collection_name, const std::string& query,
+                           const std::map<std::string, std::string>& params)
+{
+     return search_->samSearch(collection_name, query, params);
+}
+
+Response Client::samSearchAll(const std::string& query, const std::map<std::string, std::string>& params)
+{
+     return search_->samSearchAll(query, params);
+}
+
 Response Client::sqlSearch(const std::string& collection_name, const std::string& sql,
                            const std::map<std::string, std::string>& params)
 {

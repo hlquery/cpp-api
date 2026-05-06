@@ -70,6 +70,9 @@ class Client
      std::shared_ptr<Search> searchApi();
      [[deprecated("Use client.collections()->search(...) for collection-scoped searches.")]]
      Response search(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response samSearch(const std::string& collection_name, const std::string& query,
+                        const std::map<std::string, std::string>& params = {});
+     Response samSearchAll(const std::string& query, const std::map<std::string, std::string>& params = {});
      [[deprecated("Use client.collections()->sql(...) for collection-scoped SQL searches.")]]
      Response sqlSearch(const std::string& collection_name, const std::string& sql,
                         const std::map<std::string, std::string>& params = {});
