@@ -73,9 +73,11 @@ class Client
      Response samSearch(const std::string& collection_name, const std::string& query,
                         const std::map<std::string, std::string>& params = {});
      Response samSearchAll(const std::string& query, const std::map<std::string, std::string>& params = {});
-     [[deprecated("Use client.collections()->sql(...) for collection-scoped SQL searches.")]]
+     [[deprecated("Use client.sql(collection_name, sql, ...) for collection-scoped SQL searches.")]]
      Response sqlSearch(const std::string& collection_name, const std::string& sql,
                         const std::map<std::string, std::string>& params = {});
+     Response sql(const std::string& collection_name, const std::string& sql,
+                  const std::map<std::string, std::string>& params = {});
      Response sql(const std::string& sql, const std::map<std::string, std::string>& query_params = {});
      Response execSql(const std::string& sql);
      [[deprecated("Use client.collections()->vectorSearch(...) for collection-scoped vector searches.")]]

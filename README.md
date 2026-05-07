@@ -180,7 +180,7 @@ params["filter_by"] = "price:>100&&category:electronics";
 auto filtered_results = collections->search("collection", params);
 
 // SQL search
-auto sql_results = collections->sql(
+auto sql_results = client.sql(
     "collection",
     "SELECT id, title, price FROM collection ORDER BY price DESC LIMIT 5;"
 );
@@ -241,7 +241,7 @@ Compatibility note:
 - `client.sqlSearch(...)`
 - `client.vectorSearch(...)`
 
-still exist for now, but they are compatibility shims. New code should prefer `client.collections()->...` for collection-scoped search operations.
+still exist for now, but they are compatibility shims. New code should prefer `client.collections()->search(...)`, `client.sql(...)`, and `client.collections()->vectorSearch(...)`.
 
 ### SAM Search
 
@@ -299,9 +299,8 @@ Quick SQL example:
 int main()
 {
     hlquery::Client client("http://localhost:9200");
-    auto collections = client.collections();
 
-    auto response = collections->sql(
+    auto response = client.sql(
         "products",
         "SELECT id, title, price FROM products ORDER BY price DESC LIMIT 5;"
     );
@@ -321,9 +320,8 @@ Basic SQL example:
 
 ```cpp
 hlquery::Client client("http://localhost:9200");
-auto collections = client.collections();
 
-auto response = collections->sql(
+auto response = client.sql(
     "products",
     "SELECT id, title, price FROM products ORDER BY price DESC LIMIT 5;"
 );

@@ -175,6 +175,12 @@ Response Client::samSearchAll(const std::string& query, const std::map<std::stri
 Response Client::sqlSearch(const std::string& collection_name, const std::string& sql,
                            const std::map<std::string, std::string>& params)
 {
+     return this->sql(collection_name, sql, params);
+}
+
+Response Client::sql(const std::string& collection_name, const std::string& sql,
+                     const std::map<std::string, std::string>& params)
+{
      return collections_->sql(collection_name, sql, params);
 }
 
