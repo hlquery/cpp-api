@@ -34,6 +34,8 @@ Client::Client(const std::string& base_url, const std::map<std::string, std::str
      collections_ = std::make_shared<Collections>(request_);
      documents_ = std::make_shared<Documents>(request_);
      search_ = std::make_shared<Search>(request_, collections_);
+     system_ = std::make_shared<System>(request_);
+     sam_ = std::make_shared<Sam>(request_);
 }
 
 void Client::setAuthToken(const std::string& token, const std::string& method)
@@ -48,27 +50,97 @@ void Client::clearAuth()
 
 Response Client::health()
 {
-     return request_->execute("GET", "/health");
+     return system_->health();
+}
+
+Response Client::status()
+{
+     return system_->status();
+}
+
+Response Client::startup()
+{
+     return system_->startup();
+}
+
+Response Client::bootStatus()
+{
+     return system_->bootStatus();
 }
 
 Response Client::stats()
 {
-     return request_->execute("GET", "/stats");
+     return system_->stats();
+}
+
+Response Client::metrics()
+{
+     return system_->metrics();
+}
+
+Response Client::metricsJson()
+{
+     return system_->metricsJson();
+}
+
+Response Client::connections()
+{
+     return system_->connections();
+}
+
+Response Client::rocksdb()
+{
+     return system_->rocksdb();
+}
+
+Response Client::rocksdbInternal()
+{
+     return system_->rocksdbInternal();
+}
+
+Response Client::docTotal()
+{
+     return system_->docTotal();
 }
 
 Response Client::etc()
 {
-     return request_->execute("GET", "/etc");
+     return system_->etc();
 }
 
 Response Client::info()
 {
-     return request_->execute("GET", "/");
+     return system_->info();
 }
 
 Response Client::flush()
 {
      return request_->execute("POST", "/flush");
+}
+
+Response Client::ping()
+{
+     return system_->ping();
+}
+
+Response Client::integrity()
+{
+     return system_->integrity();
+}
+
+Response Client::consistency()
+{
+     return system_->consistency();
+}
+
+Response Client::selfCheck()
+{
+     return system_->selfCheck();
+}
+
+Response Client::storageStatus()
+{
+     return system_->storageStatus();
 }
 
 Response Client::links()
@@ -114,6 +186,16 @@ Response Client::linksDisconnect(const std::string& endpoint_or_host, int port)
 std::shared_ptr<Collections> Client::collections()
 {
      return collections_;
+}
+
+std::shared_ptr<System> Client::system()
+{
+     return system_;
+}
+
+std::shared_ptr<Sam> Client::sam()
+{
+     return sam_;
 }
 
 Response Client::listCollections(int offset, int limit)
@@ -164,7 +246,7 @@ Response Client::search(const std::string& collection_name, const std::map<std::
 Response Client::samSearch(const std::string& collection_name, const std::string& query,
                            const std::map<std::string, std::string>& params)
 {
-     return search_->samSearch(collection_name, query, params);
+     return sam_->search(collection_name, query, params);
 }
 
 Response Client::samSearchAll(const std::string& query, const std::map<std::string, std::string>& params)
@@ -186,26 +268,12 @@ Response Client::sql(const std::string& collection_name, const std::string& sql,
 
 Response Client::sql(const std::string& sql, const std::map<std::string, std::string>& query_params)
 {
-     if (sql.empty())
-     {
-          throw std::invalid_argument("SQL query must be a non-empty string");
-     }
-
-     std::map<std::string, std::string> params = query_params;
-     params["sql"] = sql;
-     return request_->execute("GET", "/sql", nullptr, params);
+     return system_->sql(sql, query_params);
 }
 
 Response Client::execSql(const std::string& sql)
 {
-     if (sql.empty())
-     {
-          throw std::invalid_argument("SQL query must be a non-empty string");
-     }
-
-     nlohmann::json body;
-     body["exec"] = sql;
-     return request_->execute("POST", "/sql", body);
+     return system_->execSql(sql);
 }
 
 Response Client::vectorSearch(const std::string& collection_name, const std::map<std::string, std::string>& params)

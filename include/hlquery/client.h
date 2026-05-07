@@ -20,7 +20,9 @@
 #include "documents.h"
 #include "request.h"
 #include "response.h"
+#include "sam.h"
 #include "search.h"
+#include "system.h"
 #include "utils/Config.h"
 
 namespace hlquery
@@ -35,13 +37,30 @@ class Client
      void setAuthToken(const std::string& token, const std::string& method = "bearer");
      void clearAuth();
 
+     std::shared_ptr<System> system();
+     std::shared_ptr<Sam> sam();
+
      /* System APIs */
 
      Response health();
+     Response status();
+     Response startup();
+     Response bootStatus();
      Response stats();
+     Response metrics();
+     Response metricsJson();
+     Response connections();
+     Response rocksdb();
+     Response rocksdbInternal();
+     Response docTotal();
      Response etc();
      Response info();
      Response flush();
+     Response ping();
+     Response integrity();
+     Response consistency();
+     Response selfCheck();
+     Response storageStatus();
 
      /* Cluster links */
 
@@ -97,6 +116,8 @@ class Client
      std::shared_ptr<Collections> collections_;
      std::shared_ptr<Documents> documents_;
      std::shared_ptr<Search> search_;
+     std::shared_ptr<System> system_;
+     std::shared_ptr<Sam> sam_;
 };
 
 }

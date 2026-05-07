@@ -36,8 +36,10 @@ SOURCES = src/client.cpp \
           src/documents.cpp \
           src/request.cpp \
           src/response.cpp \
+          src/sam.cpp \
           src/search.cpp \
           src/searchresult.cpp \
+          src/system.cpp \
           src/ranker.cpp \
           src/utils/Config.cpp \
           src/utils/Validator.cpp \

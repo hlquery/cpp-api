@@ -17,23 +17,20 @@
 
 ### What is the hlquery C++ API?
 
-The hlquery C++ API is the official C++ client for hlquery. It wraps the server's HTTP/JSON interface in a small typed client with response helpers, auth support, SQL helpers, and SAM support.
+The hlquery C++ API is the official C++ client for hlquery. It wraps the server's HTTP/JSON interface in a small typed client with response helpers, auth support, SQL helpers, system helpers, and SAM support.
 
 It is intended for native services, command-line tools, and applications that want direct hlquery access without hand-rolling HTTP calls.
 
 ### Why use it?
 
 - Less request and parsing boilerplate than raw HTTP.
-- One client entry point for collections, documents, search, SQL, and SAM.
+- One client entry point for collections, documents, search, SQL, system endpoints, and SAM.
 - Optional HTTPS/OpenSSL support.
 - Works well for native applications that want a small static client library.
 
 ### Why choose it over raw HTTP?
 
-- Consistent request setup and auth handling.
-- Convenience wrappers for common hlquery endpoints.
-- Type-safe response objects with predictable access patterns.
-- Raw request escape hatch still exists for custom routes.
+Choose the C++ client over raw HTTP when you want consistent request setup and auth handling, convenience wrappers for common hlquery endpoints, and type-safe response objects with predictable access patterns, while still keeping a raw request escape hatch for custom routes.
 
 ### Install
 
@@ -68,7 +65,7 @@ int main() {
     try {
         hlquery::Client client("http://localhost:9200");
 
-        auto health = client.health();
+        auto health = client.system()->health();
         std::cout << "Status: " << health.getStatusCode() << std::endl;
 
         auto collections = client.collections();
@@ -117,12 +114,29 @@ std::cout << history.getBody().dump(2) << std::endl;
 std::cout << results.getBody().dump(2) << std::endl;
 ```
 
+### System
+
+Use the system helper for operational routes that were added after the initial C++ client surface:
+
+```cpp
+hlquery::Client client("http://localhost:9200");
+
+auto system = client.system();
+auto status = system->status();
+auto metrics = system->metricsJson();
+auto storage = system->storageStatus();
+
+std::cout << status.getBody().dump(2) << std::endl;
+std::cout << metrics.getBody().dump(2) << std::endl;
+std::cout << storage.getBody().dump(2) << std::endl;
+```
+
 ### SQL
 
 ```cpp
 hlquery::Client client("http://localhost:9200");
 
-auto rows = client.sql("SHOW COLLECTIONS;");
+auto rows = client.system()->sql("SHOW COLLECTIONS;");
 auto products = client.sql(
     "products",
     "SELECT id, title, price FROM products ORDER BY price DESC LIMIT 3;"
@@ -150,4 +164,5 @@ auto response = client.executeRequest(
 
 - `make clean` removes build artifacts.
 - When OpenSSL lives outside default include paths, the build uses `pkg-config` to resolve flags.
+- See `etc/api/cpp/examples/` for runnable SQL and SAM examples.
 - See `etc/api/cpp/include/hlquery/` and `etc/api/cpp/src/` for the full client surface.

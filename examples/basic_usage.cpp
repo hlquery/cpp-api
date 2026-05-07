@@ -19,7 +19,7 @@ int main()
 
           /* Health check */
 
-          auto health = client.health();
+          auto health = client.system()->health();
           std::cout << "Health: " << health.getStatusCode() << std::endl;
 
           /* List collections */

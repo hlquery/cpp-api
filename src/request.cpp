@@ -10,6 +10,7 @@
  * For more details, please visit: https://docs.hlquery.com
  */
 
+#include <algorithm>
 #include <arpa/inet.h>
 #include <cstring>
 #include <errno.h>
@@ -17,6 +18,7 @@
 #include <iostream>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <cctype>
 #include <regex>
 #include <sstream>
 #include <sys/socket.h>
@@ -33,6 +35,56 @@
 
 namespace hlquery
 {
+
+namespace
+{
+
+std::string toLower(std::string value)
+{
+     std::transform(value.begin(), value.end(), value.begin(),
+                    [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+     return value;
+}
+
+bool sendAllPlain(int sock, const std::string& data)
+{
+     size_t total_sent = 0;
+
+     while (total_sent < data.size())
+     {
+          ssize_t sent = send(sock, data.c_str() + total_sent, data.size() - total_sent, 0);
+          if (sent <= 0)
+          {
+               return false;
+          }
+
+          total_sent += static_cast<size_t>(sent);
+     }
+
+     return true;
+}
+
+#ifdef HLQUERY_HAS_OPENSSL
+bool sendAllSsl(SSL* ssl, const std::string& data)
+{
+     size_t total_sent = 0;
+
+     while (total_sent < data.size())
+     {
+          int sent = SSL_write(ssl, data.c_str() + total_sent, static_cast<int>(data.size() - total_sent));
+          if (sent <= 0)
+          {
+               return false;
+          }
+
+          total_sent += static_cast<size_t>(sent);
+     }
+
+     return true;
+}
+#endif
+
+}
 
 Request::Request(const std::string& base_url, int timeout,
                  const std::string& auth_token, const std::string& auth_method,
@@ -221,6 +273,8 @@ Response Request::makeHttpRequest(const std::string& method, const std::string& 
                throw RequestException("Failed to create SSL connection");
           }
 
+          SSL_set_tlsext_host_name(ssl, host.c_str());
+
           if (tls_verify_)
           {
                X509_VERIFY_PARAM* verify_params = SSL_get0_param(ssl);
@@ -278,19 +332,19 @@ Response Request::makeHttpRequest(const std::string& method, const std::string& 
 
      /* Send request */
 
-     int sent = 0;
+     bool sent_ok = false;
      if (use_ssl)
      {
 #ifdef HLQUERY_HAS_OPENSSL
-          sent = SSL_write(ssl, request_str.c_str(), request_str.length());
+          sent_ok = sendAllSsl(ssl, request_str);
 #endif
      }
      else
      {
-          sent = send(sock, request_str.c_str(), request_str.length(), 0);
+          sent_ok = sendAllPlain(sock, request_str);
      }
 
-     if (sent < 0)
+     if (!sent_ok)
      {
 #ifdef HLQUERY_HAS_OPENSSL
           if (use_ssl)
@@ -334,12 +388,13 @@ Response Request::makeHttpRequest(const std::string& method, const std::string& 
 
           if (response_str.find("\r\n\r\n") != std::string::npos)
           {
-               size_t content_length_pos = response_str.find("Content-Length: ");
+               std::string lower_response = toLower(response_str);
+               size_t content_length_pos = lower_response.find("content-length: ");
                if (content_length_pos != std::string::npos)
                {
                     size_t header_end = response_str.find("\r\n\r\n");
                     size_t content_start = header_end + 4;
-                    size_t content_length_end = response_str.find("\r\n", content_length_pos);
+                    size_t content_length_end = lower_response.find("\r\n", content_length_pos);
                     int content_length = std::stoi(response_str.substr(content_length_pos + 16,
                                                                        content_length_end - content_length_pos - 16));
 
