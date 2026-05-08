@@ -37,20 +37,20 @@ Choose the C++ client over raw HTTP when you want consistent request setup and a
 Build locally:
 
 ```bash
-make
+$ make
 ```
 
 On FreeBSD, use:
 
 ```bash
-gmake
+$ gmake
 ```
 
 Build modes:
 
 ```bash
-make OPENSSL=0
-make OPENSSL=1
+$ make OPENSSL=0
+$ make OPENSSL=1
 ```
 
 Artifacts are written to `build/`.
@@ -160,9 +160,23 @@ auto response = client.executeRequest(
 );
 ```
 
-### Notes
+### Contributing
 
-- `make clean` removes build artifacts.
-- When OpenSSL lives outside default include paths, the build uses `pkg-config` to resolve flags.
-- See `etc/api/cpp/examples/` for runnable SQL and SAM examples.
-- See `etc/api/cpp/include/hlquery/` and `etc/api/cpp/src/` for the full client surface.
+We welcome contributions from the community! All contributions must be released under the BSD 3-Clause license.
+
+### How to Contribute
+
+- Check existing [issues](https://github.com/hlquery/hlquery/issues) or create new ones
+- Contribute to client libraries (Node.js, Go, Java, Python, PHP, Ruby, Rust, Perl, C++)
+- Test and report bugs
+- Improve documentation
+
+### Community
+
+- 📖 [Documentation](https://docs.hlquery.com)
+- 🐦 [X (Twitter)](https://x.com/hlquery)
+- 📦 [GitHub](https://github.com/hlquery/hlquery)
+
+### License
+
+hlquery is licensed under the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause).
