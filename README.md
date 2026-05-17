@@ -17,7 +17,7 @@
 
 ### What is the hlquery C++ API?
 
-The hlquery C++ API is the official C++ client for hlquery. It wraps the server's HTTP/JSON interface in a small typed client with response helpers, auth support, SQL helpers, system helpers, and SAM support.
+The hlquery C++ API is the official C++ client for [hlquery](https://github.com/hlquery/hlquery). It wraps the server's HTTP/JSON interface in a small typed client with response helpers, auth support, SQL helpers, system helpers, and SAM support.
 
 It is intended for native services, command-line tools, and applications that want direct hlquery access without hand-rolling HTTP calls.
 
