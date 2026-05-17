@@ -46,6 +46,61 @@ std::string toLower(std::string value)
      return value;
 }
 
+std::string decodeChunkedBody(const std::string& chunked_body)
+{
+     std::string decoded;
+     decoded.reserve(chunked_body.size());
+
+     size_t pos = 0;
+     while (true)
+     {
+          size_t line_end = chunked_body.find("\r\n", pos);
+          if (line_end == std::string::npos)
+          {
+               throw RequestException("Invalid chunked HTTP response: missing chunk size terminator");
+          }
+
+          std::string size_line = chunked_body.substr(pos, line_end - pos);
+          size_t ext_pos = size_line.find(';');
+          if (ext_pos != std::string::npos)
+          {
+               size_line.erase(ext_pos);
+          }
+
+          size_t chunk_size = 0;
+          try
+          {
+               chunk_size = static_cast<size_t>(std::stoul(size_line, nullptr, 16));
+          }
+          catch (const std::exception&)
+          {
+               throw RequestException("Invalid chunked HTTP response: invalid chunk size");
+          }
+
+          pos = line_end + 2;
+          if (chunk_size == 0)
+          {
+               break;
+          }
+
+          if (pos + chunk_size > chunked_body.size())
+          {
+               throw RequestException("Invalid chunked HTTP response: chunk exceeds remaining body");
+          }
+
+          decoded.append(chunked_body, pos, chunk_size);
+          pos += chunk_size;
+
+          if (chunked_body.compare(pos, 2, "\r\n") != 0)
+          {
+               throw RequestException("Invalid chunked HTTP response: missing chunk terminator");
+          }
+          pos += 2;
+     }
+
+     return decoded;
+}
+
 bool sendAllPlain(int sock, const std::string& data)
 {
      size_t total_sent = 0;
@@ -363,6 +418,12 @@ Response Request::makeHttpRequest(const std::string& method, const std::string& 
      std::string response_str;
      int bytes_received;
 
+     bool headers_parsed = false;
+     bool chunked_transfer = false;
+     bool has_content_length = false;
+     size_t content_length = 0;
+     size_t header_end_pos = std::string::npos;
+
      while (true)
      {
           if (use_ssl)
@@ -384,26 +445,52 @@ Response Request::makeHttpRequest(const std::string& method, const std::string& 
           buffer[bytes_received] = '\0';
           response_str += buffer;
 
-          /* Check if we have received the complete HTTP response */
-
-          if (response_str.find("\r\n\r\n") != std::string::npos)
+          /* If Content-Length is present, we can stop early once the full body is received.
+           * Otherwise, keep reading until the server closes the connection (we send Connection: close).
+           */
+          if (!headers_parsed)
           {
-               std::string lower_response = toLower(response_str);
-               size_t content_length_pos = lower_response.find("content-length: ");
-               if (content_length_pos != std::string::npos)
+               header_end_pos = response_str.find("\r\n\r\n");
+               if (header_end_pos != std::string::npos)
                {
-                    size_t header_end = response_str.find("\r\n\r\n");
-                    size_t content_start = header_end + 4;
-                    size_t content_length_end = lower_response.find("\r\n", content_length_pos);
-                    int content_length = std::stoi(response_str.substr(content_length_pos + 16,
-                                                                       content_length_end - content_length_pos - 16));
+                    headers_parsed = true;
 
-                    if (response_str.length() - content_start >= static_cast<size_t>(content_length))
+                    std::string lower_headers = toLower(response_str.substr(0, header_end_pos + 4));
+                    size_t content_length_pos = lower_headers.find("content-length:");
+                    if (content_length_pos != std::string::npos)
                     {
-                         break;
+                         size_t line_end = lower_headers.find("\r\n", content_length_pos);
+                         std::string value = lower_headers.substr(content_length_pos + 15, line_end - (content_length_pos + 15));
+                         value.erase(0, value.find_first_not_of(" \t"));
+                         try
+                         {
+                              content_length = static_cast<size_t>(std::stoul(value));
+                              has_content_length = true;
+                         }
+                         catch (const std::exception&)
+                         {
+                              throw RequestException("Invalid HTTP response: bad Content-Length");
+                         }
+                    }
+
+                    size_t transfer_encoding_pos = lower_headers.find("transfer-encoding:");
+                    if (transfer_encoding_pos != std::string::npos)
+                    {
+                         size_t line_end = lower_headers.find("\r\n", transfer_encoding_pos);
+                         std::string value = lower_headers.substr(transfer_encoding_pos + 18, line_end - (transfer_encoding_pos + 18));
+                         value.erase(0, value.find_first_not_of(" \t"));
+                         if (value.find("chunked") != std::string::npos)
+                         {
+                              chunked_transfer = true;
+                         }
                     }
                }
-               else
+          }
+
+          if (headers_parsed && has_content_length)
+          {
+               size_t body_start = header_end_pos + 4;
+               if (response_str.size() >= body_start && (response_str.size() - body_start) >= content_length)
                {
                     break;
                }
@@ -430,6 +517,10 @@ Response Request::makeHttpRequest(const std::string& method, const std::string& 
 
      std::string headers_str = response_str.substr(0, header_end);
      std::string body_str = response_str.substr(header_end + 4);
+     if (chunked_transfer && !body_str.empty())
+     {
+          body_str = decodeChunkedBody(body_str);
+     }
 
      /* Parse status line */
 

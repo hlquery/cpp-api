@@ -7,10 +7,10 @@
 **A modular C++ client library for hlquery, designed with a familiar and intuitive API structure.**
 
 [![Follow hlquery](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white)](https://x.com/hlquery)
-[![Linux Build](https://github.com/hlquery/cpp-api/workflows/Linux%20build/badge.svg)](https://github.com/hlquery/cpp-api/actions)
+[![C++ build](https://img.shields.io/github/actions/workflow/status/hlquery/cpp-api/linux-build.yml?branch=unstable&label=C%2B%2B%20build&color=purple)](https://github.com/hlquery/cpp-api/actions)
 [![macOS Build](https://github.com/hlquery/cpp-api/workflows/macOS%20Build/badge.svg)](https://github.com/hlquery/cpp-api/actions)
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/hlquery/cpp-api)](https://github.com/hlquery/cpp-api/pulse)
-[![GitHub](https://img.shields.io/badge/GitHub-hlquery-blue?logo=github&logoColor=white)](https://github.com/hlquery/hlquery/stargazers)
+[![GitHub](https://img.shields.io/badge/GitHub-cpp--api-purple?logo=github&logoColor=white)](https://github.com/hlquery/cpp-api/stargazers)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 </div>
