@@ -99,10 +99,11 @@ Response Documents::importDocuments(const std::string& collection_name, const st
 {
      utils::validateCollectionName(collection_name);
 
-     nlohmann::json payload = nlohmann::json::array();
+     nlohmann::json payload;
+     payload["documents"] = nlohmann::json::array();
      for (const auto& doc : documents)
      {
-          payload.push_back(doc);
+          payload["documents"].push_back(doc);
      }
 
      std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/import";

@@ -76,6 +76,7 @@ class Client
      Response listCollectionsDistributed();
      Response getCollection(const std::string& name);
      Response getCollectionFields(const std::string& name);
+     Response copyCollection(const std::string& source_name, const std::string& target_name, int batch_size = 500);
 
      /* Documents API */
 

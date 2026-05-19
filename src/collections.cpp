@@ -11,6 +11,7 @@
  */
 
 #include <sstream>
+#include <set>
 #include <stdexcept>
 
 #include "hlquery/collections.h"
@@ -19,6 +20,66 @@
 
 namespace hlquery
 {
+
+namespace
+{
+
+nlohmann::json buildCreatePayloadFromCollectionInfo(const nlohmann::json& source_info, const std::string& target_name)
+{
+     nlohmann::json payload;
+     payload["name"] = target_name;
+
+     if (source_info.contains("fields") && source_info["fields"].is_object() && !source_info["fields"].empty())
+     {
+          payload["fields"] = nlohmann::json::array();
+
+          std::set<std::string> field_names;
+          for (auto it = source_info["fields"].begin(); it != source_info["fields"].end(); ++it)
+          {
+               field_names.insert(it.key());
+          }
+
+          for (const auto& field_name : field_names)
+          {
+               nlohmann::json field;
+               field["name"] = field_name;
+               field["type"] = source_info["fields"][field_name].is_string() ? source_info["fields"][field_name].get<std::string>() : "string";
+               payload["fields"].push_back(field);
+          }
+     }
+     else if (source_info.contains("searchable_fields") && source_info["searchable_fields"].is_array() &&
+              !source_info["searchable_fields"].empty())
+     {
+          payload["searchable_fields"] = source_info["searchable_fields"];
+     }
+     else
+     {
+          payload["searchable_fields"] = nlohmann::json::array({"title", "content"});
+     }
+
+     if (source_info.contains("metadata") && source_info["metadata"].is_object())
+     {
+          for (auto it = source_info["metadata"].begin(); it != source_info["metadata"].end(); ++it)
+          {
+               if (!it.key().empty() && it.key()[0] == '_')
+               {
+                    payload[it.key()] = it.value();
+               }
+          }
+     }
+
+     return payload;
+}
+
+nlohmann::json makeErrorBody(const std::string& error, const std::string& message)
+{
+     nlohmann::json body;
+     body["error"] = error;
+     body["message"] = message;
+     return body;
+}
+
+}
 
 Collections::Collections(std::shared_ptr<Request> request) : request_(request)
 {
@@ -305,6 +366,129 @@ Response Collections::vectorSearch(const std::string& name, const std::map<std::
 SearchResult Collections::vectorSearchStructured(const std::string& name, const std::map<std::string, std::string>& params)
 {
      return SearchResult(vectorSearch(name, params));
+}
+
+Response Collections::copy(const std::string& source_name, const std::string& target_name, int batch_size)
+{
+     utils::validateCollectionName(source_name);
+     utils::validateCollectionName(target_name);
+
+     if (source_name == target_name)
+     {
+          return Response(400, makeErrorBody("Invalid arguments", "Source and target collection names must differ"));
+     }
+
+     if (batch_size <= 0)
+     {
+          return Response(400, makeErrorBody("Invalid arguments", "Batch size must be a positive integer"));
+     }
+
+     Response source_info = get(source_name);
+     if (source_info.getStatusCode() != 200)
+     {
+          return source_info;
+     }
+
+     Response target_check = get(target_name);
+     if (target_check.getStatusCode() == 200)
+     {
+          return Response(409, makeErrorBody("Collection exists", "Target collection already exists: " + target_name));
+     }
+     if (target_check.getStatusCode() != 404)
+     {
+          /* If we got something other than "not found", bubble it up. */
+          return target_check;
+     }
+
+     nlohmann::json create_payload = buildCreatePayloadFromCollectionInfo(source_info.getBody(), target_name);
+     Response create_response = request_->execute("POST", "/collections", create_payload);
+     if (create_response.getStatusCode() != 201)
+     {
+          return create_response;
+     }
+
+     int offset = 0;
+     int copied_count = 0;
+
+     while (true)
+     {
+          std::map<std::string, std::string> params;
+          params["offset"] = std::to_string(offset);
+          params["limit"] = std::to_string(batch_size);
+          params["distributed"] = "off";
+
+          std::string list_path = "/collections/" + utils::urlEncode(source_name) + "/documents";
+          Response list_response = request_->execute("GET", list_path, nullptr, params);
+
+          if (list_response.getStatusCode() == 400)
+          {
+               params.erase("distributed");
+               list_response = request_->execute("GET", list_path, nullptr, params);
+          }
+
+          if (list_response.getStatusCode() != 200)
+          {
+               return list_response;
+          }
+
+          nlohmann::json list_body = list_response.getBody();
+          if (!list_body.is_object() || !list_body.contains("documents") || !list_body["documents"].is_array())
+          {
+               return Response(502, makeErrorBody("Invalid response", "Server response missing 'documents' array"));
+          }
+
+          const nlohmann::json& documents = list_body["documents"];
+          if (documents.empty())
+          {
+               break;
+          }
+
+          nlohmann::json import_payload;
+          import_payload["documents"] = documents;
+
+          std::string import_path = "/collections/" + utils::urlEncode(target_name) + "/documents/import";
+          Response import_response = request_->execute("POST", import_path, import_payload);
+
+          if (import_response.getStatusCode() == 200 || import_response.getStatusCode() == 201)
+          {
+               copied_count += static_cast<int>(documents.size());
+               offset += static_cast<int>(documents.size());
+               continue;
+          }
+
+          if (import_response.getStatusCode() == 404)
+          {
+               int imported = 0;
+               for (const auto& doc : documents)
+               {
+                    if (!doc.is_object())
+                    {
+                         continue;
+                    }
+
+                    std::string add_path = "/collections/" + utils::urlEncode(target_name) + "/documents";
+                    Response single_response = request_->execute("POST", add_path, doc);
+                    if (single_response.getStatusCode() != 201)
+                    {
+                         return single_response;
+                    }
+
+                    imported++;
+               }
+
+               copied_count += imported;
+               offset += static_cast<int>(documents.size());
+               continue;
+          }
+
+          return import_response;
+     }
+
+     nlohmann::json result;
+     result["source"] = source_name;
+     result["target"] = target_name;
+     result["copied_documents"] = copied_count;
+     return Response(200, result);
 }
 
 }

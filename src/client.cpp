@@ -218,6 +218,11 @@ Response Client::getCollectionFields(const std::string& name)
      return collections_->getFields(name);
 }
 
+Response Client::copyCollection(const std::string& source_name, const std::string& target_name, int batch_size)
+{
+     return collections_->copy(source_name, target_name, batch_size);
+}
+
 std::shared_ptr<Documents> Client::documents()
 {
      return documents_;

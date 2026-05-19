@@ -43,6 +43,10 @@ class Collections
      Response vectorSearch(const std::string& name, const std::map<std::string, std::string>& params = {});
      SearchResult vectorSearchStructured(const std::string& name, const std::map<std::string, std::string>& params = {});
 
+     /* Utility helpers */
+
+     Response copy(const std::string& source_name, const std::string& target_name, int batch_size = 500);
+
    private:
 
      std::shared_ptr<Request> request_;

@@ -8,7 +8,7 @@
 
 [![Follow hlquery](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white&labelColor=000000)](https://x.com/hlquery)
 [![cpp-api](https://img.shields.io/badge/GitHub-cpp--api-purple?logo=github&logoColor=white&labelColor=000000)](https://github.com/hlquery/cpp-api/stargazers)
-[![GitHub](https://img.shields.io/badge/GitHub-cpp--api-purple?logo=github&logoColor=white)](https://github.com/hlquery/cpp-api/stargazers)
+[![GitHub](https://img.shields.io/badge/GitHub-hlquery-blue?logo=github&logoColor=white&labelColor=000000)](https://github.com/hlquery/hlquery/stargazers)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-a35a0f?logo=open-source-initiative&logoColor=white&labelColor=000000)](https://opensource.org/licenses/BSD-3-Clause)
 
 </div>
@@ -139,6 +139,16 @@ auto products = client.sql(
     "products",
     "SELECT id, title, price FROM products ORDER BY price DESC LIMIT 3;"
 );
+```
+
+### Copy Collections
+
+Copy a collection (schema + all documents) into a new collection name:
+
+```cpp
+hlquery::Client client("http://localhost:9200");
+auto result = client.copyCollection("source_collection", "target_collection");
+std::cout << result.getBody().dump(2) << std::endl;
 ```
 
 ### Reduce Text Example
