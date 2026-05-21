@@ -7,8 +7,8 @@
 **A modular C++ client library for hlquery, designed with a familiar and intuitive API structure.**
 
 [![Follow hlquery](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white&labelColor=000000)](https://x.com/hlquery)
-[![cpp-api](https://img.shields.io/badge/GitHub-cpp--api-purple?logo=github&logoColor=white&labelColor=000000)](https://github.com/hlquery/cpp-api/stargazers)
-[![GitHub](https://img.shields.io/badge/GitHub-hlquery-blue?logo=github&logoColor=white&labelColor=000000)](https://github.com/hlquery/hlquery/stargazers)
+[![cpp-api](https://img.shields.io/badge/GitHub-cpp--api-purple?logo=github&logoColor=white&labelColor=000000)](https://github.com/hlquery/cpp-api/)
+[![GitHub](https://img.shields.io/badge/GitHub-hlquery-blue?logo=github&logoColor=white&labelColor=000000)](https://github.com/hlquery/hlquery/)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-a35a0f?logo=open-source-initiative&logoColor=white&labelColor=000000)](https://opensource.org/licenses/BSD-3-Clause)
 
 </div>
@@ -21,14 +21,11 @@ It is intended for native services, command-line tools, and applications that wa
 
 ### Why use it?
 
-- Less request and parsing boilerplate than raw HTTP.
-- One client entry point for collections, documents, search, SQL, system endpoints, and SAM.
-- Optional HTTPS/OpenSSL support.
-- Works well for native applications that want a small static client library.
+Use the C++ client when your application already lives close to hlquery and you want the search layer to feel native instead of like a pile of hand-built HTTP calls. The library keeps request setup, auth, response parsing, and endpoint routing in one place, so application code can work with collections, documents, search, SQL, system routes, and SAM through one small client surface.
 
-### Why choose it over raw HTTP?
+It is still close to the server API. You get typed helpers for the common paths, but the raw request helper remains available for custom module routes or newer endpoints that have not yet grown a dedicated wrapper. That makes it useful for production services that want a stable integration point without losing access to hlquery's full HTTP surface.
 
-Choose the C++ client over raw HTTP when you want consistent request setup and auth handling, convenience wrappers for common hlquery endpoints, and type-safe response objects with predictable access patterns, while still keeping a raw request escape hatch for custom routes.
+The client can be built with or without OpenSSL, which keeps local and embedded builds small when HTTPS is not needed while still allowing secure connections where deployment requires them.
 
 ### Install
 
@@ -170,20 +167,15 @@ auto response = client.executeRequest(
 
 ### Contributing
 
-We welcome contributions from the community! All contributions must be released under the BSD 3-Clause license.
+We welcome contributions from the community. All contributions must be released under the BSD 3-Clause license.
 
 ### How to Contribute
 
-- Check existing [issues](https://github.com/hlquery/hlquery/issues) or create new ones
-- Contribute to client libraries (Node.js, Go, Java, Python, PHP, Ruby, Rust, Perl, C++)
-- Test and report bugs
-- Improve documentation
+Start with the existing [issues](https://github.com/hlquery/hlquery/issues), or open a new one when you find a bug or missing feature. Contributions to client libraries, tests, bug reports, and documentation are all useful.
 
 ### Community
 
-- 📖 [Documentation](https://docs.hlquery.com)
-- 🐦 [X (Twitter)](https://x.com/hlquery)
-- 📦 [GitHub](https://github.com/hlquery/hlquery)
+Project documentation is available at [docs.hlquery.com](https://docs.hlquery.com). You can also follow updates on [X](https://x.com/hlquery) or browse the main repository on [GitHub](https://github.com/hlquery/hlquery).
 
 ### License
 
