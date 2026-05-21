@@ -25,8 +25,6 @@ Use the C++ client when your application already lives close to hlquery and you 
 
 It is still close to the server API. You get typed helpers for the common paths, but the raw request helper remains available for custom module routes or newer endpoints that have not yet grown a dedicated wrapper. That makes it useful for production services that want a stable integration point without losing access to hlquery's full HTTP surface.
 
-The client can be built with or without OpenSSL, which keeps local and embedded builds small when HTTPS is not needed while still allowing secure connections where deployment requires them.
-
 ### Install
 
 Build locally:
