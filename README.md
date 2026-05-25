@@ -163,18 +163,3 @@ auto response = client.executeRequest(
 );
 ```
 
-### Contributing
-
-We welcome contributions from the community. All contributions must be released under the BSD 3-Clause license.
-
-### How to Contribute
-
-Start with the existing [issues](https://github.com/hlquery/hlquery/issues), or open a new one when you find a bug or missing feature. Contributions to client libraries, tests, bug reports, and documentation are all useful.
-
-### Community
-
-Project documentation is available at [docs.hlquery.com](https://docs.hlquery.com). You can also follow updates on [X](https://x.com/hlquery) or browse the main repository on [GitHub](https://github.com/hlquery/hlquery).
-
-### License
-
-hlquery is licensed under the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause).
