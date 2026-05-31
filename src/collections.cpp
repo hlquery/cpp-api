@@ -21,8 +21,6 @@
 namespace hlquery
 {
 
-namespace
-{
 
 nlohmann::json buildCreatePayloadFromCollectionInfo(const nlohmann::json& source_info, const std::string& target_name)
 {
@@ -79,7 +77,6 @@ nlohmann::json makeErrorBody(const std::string& error, const std::string& messag
      return body;
 }
 
-}
 
 Collections::Collections(std::shared_ptr<Request> request) : request_(request)
 {

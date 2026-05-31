@@ -21,8 +21,6 @@ namespace hlquery
 namespace utils
 {
 
-namespace
-{
 bool parseBoolOption(const std::string& value)
 {
      std::string lowered;
@@ -32,7 +30,6 @@ bool parseBoolOption(const std::string& value)
           lowered.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(ch))));
      }
      return !(lowered == "0" || lowered == "false" || lowered == "no" || lowered == "off");
-}
 }
 
 ConfigOptions mergeDefaults(const std::map<std::string, std::string>& user_options)

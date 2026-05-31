@@ -36,8 +36,6 @@
 namespace hlquery
 {
 
-namespace
-{
 
 std::string toLower(std::string value)
 {
@@ -139,7 +137,6 @@ bool sendAllSsl(SSL* ssl, const std::string& data)
 }
 #endif
 
-}
 
 Request::Request(const std::string& base_url, int timeout,
                  const std::string& auth_token, const std::string& auth_method,
