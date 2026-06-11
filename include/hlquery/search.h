@@ -32,9 +32,6 @@ class Search
      Search(std::shared_ptr<Request> request, std::shared_ptr<Collections> collections);
 
      Response search(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
-     Response samSearch(const std::string& collection_name, const std::string& query,
-                        const std::map<std::string, std::string>& params = {});
-     Response samSearchAll(const std::string& query, const std::map<std::string, std::string>& params = {});
      Response sql(const std::string& collection_name, const std::string& sql,
                   const std::map<std::string, std::string>& params = {});
      Response multiSearch(const std::vector<nlohmann::json>& searches);

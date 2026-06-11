@@ -99,53 +99,6 @@ Response Search::search(const std::string& collection_name, const std::map<std::
      return request_->execute("GET", path);
 }
 
-Response Search::samSearch(const std::string& collection_name, const std::string& query,
-                           const std::map<std::string, std::string>& params)
-{
-     utils::validateCollectionName(collection_name);
-
-     if (query.empty())
-     {
-          throw std::invalid_argument("SAM query must be a non-empty string");
-     }
-
-     std::map<std::string, std::string> query_params = params;
-     query_params["collection"] = collection_name;
-     query_params["q"] = query;
-
-     std::string path = "/sam/search";
-     std::string query_string = buildQueryString(query_params);
-
-     if (!query_string.empty())
-     {
-          path += "?" + query_string;
-     }
-
-     return request_->execute("GET", path);
-}
-
-Response Search::samSearchAll(const std::string& query, const std::map<std::string, std::string>& params)
-{
-     if (query.empty())
-     {
-          throw std::invalid_argument("SAM query must be a non-empty string");
-     }
-
-     std::map<std::string, std::string> query_params = params;
-     query_params["q"] = query;
-     query_params["all"] = "true";
-
-     std::string path = "/sam/search";
-     std::string query_string = buildQueryString(query_params);
-
-     if (!query_string.empty())
-     {
-          path += "?" + query_string;
-     }
-
-     return request_->execute("GET", path);
-}
-
 Response Search::sql(const std::string& collection_name, const std::string& sql,
                      const std::map<std::string, std::string>& params)
 {

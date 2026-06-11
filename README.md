@@ -15,13 +15,13 @@
 
 ### What is the hlquery C++ API?
 
-The hlquery C++ API is the official C++ client for [hlquery](https://github.com/hlquery/hlquery). It wraps the server's HTTP/JSON interface in a small typed client with response helpers, auth support, SQL helpers, system helpers, and SAM support.
+The hlquery C++ API is the official C++ client for [hlquery](https://github.com/hlquery/hlquery). It wraps the server's HTTP/JSON interface in a small typed client with response helpers, auth support, SQL helpers, and system helpers.
 
 It is intended for native services, command-line tools, and applications that want direct hlquery access without hand-rolling HTTP calls.
 
 ### Why use it?
 
-Use the C++ client when your application already lives close to hlquery and you want the search layer to feel native instead of like a pile of hand-built HTTP calls. The library keeps request setup, auth, response parsing, and endpoint routing in one place, so application code can work with collections, documents, search, SQL, system routes, and SAM through one small client surface.
+Use the C++ client when your application already lives close to hlquery and you want the search layer to feel native instead of like a pile of hand-built HTTP calls. The library keeps request setup, auth, response parsing, and endpoint routing in one place, so application code can work with collections, documents, search, SQL, and system routes through one small client surface.
 
 It is still close to the server API. You get typed helpers for the common paths, but the raw request helper remains available for custom module routes or newer endpoints that have not yet grown a dedicated wrapper. That makes it useful for production services that want a stable integration point without losing access to hlquery's full HTTP surface.
 
@@ -86,27 +86,6 @@ client.setAuthToken("your_api_key_here", "api-key");
 client.clearAuth();
 ```
 
-### SAM
-
-Use the SAM helpers to inspect indexing status and run SAM search:
-
-SAM is separate from vector search. It performs term and intent-style lookup, not vector similarity search.
-
-```cpp
-hlquery::Client client("http://localhost:9200");
-
-auto sam = client.sam();
-auto status = sam->status("music");
-auto history = sam->history("music", 5);
-auto results = sam->search("music", "queen of pop", {
-    {"limit", "10"}
-});
-
-std::cout << status.getBody().dump(2) << std::endl;
-std::cout << history.getBody().dump(2) << std::endl;
-std::cout << results.getBody().dump(2) << std::endl;
-```
-
 ### System
 
 Use the system helper for operational routes that were added after the initial C++ client surface:
@@ -162,4 +141,3 @@ auto response = client.executeRequest(
     }
 );
 ```
-

@@ -20,7 +20,6 @@
 #include "documents.h"
 #include "request.h"
 #include "response.h"
-#include "sam.h"
 #include "search.h"
 #include "system.h"
 #include "utils/Config.h"
@@ -38,7 +37,6 @@ class Client
      void clearAuth();
 
      std::shared_ptr<System> system();
-     std::shared_ptr<Sam> sam();
 
      /* System APIs */
 
@@ -90,9 +88,6 @@ class Client
      std::shared_ptr<Search> searchApi();
      [[deprecated("Use client.collections()->search(...) for collection-scoped searches.")]]
      Response search(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
-     Response samSearch(const std::string& collection_name, const std::string& query,
-                        const std::map<std::string, std::string>& params = {});
-     Response samSearchAll(const std::string& query, const std::map<std::string, std::string>& params = {});
      [[deprecated("Use client.sql(collection_name, sql, ...) for collection-scoped SQL searches.")]]
      Response sqlSearch(const std::string& collection_name, const std::string& sql,
                         const std::map<std::string, std::string>& params = {});
@@ -118,7 +113,6 @@ class Client
      std::shared_ptr<Documents> documents_;
      std::shared_ptr<Search> search_;
      std::shared_ptr<System> system_;
-     std::shared_ptr<Sam> sam_;
 };
 
 }

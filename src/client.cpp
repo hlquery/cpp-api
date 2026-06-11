@@ -35,7 +35,6 @@ Client::Client(const std::string& base_url, const std::map<std::string, std::str
      documents_ = std::make_shared<Documents>(request_);
      search_ = std::make_shared<Search>(request_, collections_);
      system_ = std::make_shared<System>(request_);
-     sam_ = std::make_shared<Sam>(request_);
 }
 
 void Client::setAuthToken(const std::string& token, const std::string& method)
@@ -193,11 +192,6 @@ std::shared_ptr<System> Client::system()
      return system_;
 }
 
-std::shared_ptr<Sam> Client::sam()
-{
-     return sam_;
-}
-
 Response Client::listCollections(int offset, int limit)
 {
      return collections_->list(offset, limit);
@@ -246,17 +240,6 @@ std::shared_ptr<Search> Client::searchApi()
 Response Client::search(const std::string& collection_name, const std::map<std::string, std::string>& params)
 {
      return collections_->search(collection_name, params);
-}
-
-Response Client::samSearch(const std::string& collection_name, const std::string& query,
-                           const std::map<std::string, std::string>& params)
-{
-     return sam_->search(collection_name, query, params);
-}
-
-Response Client::samSearchAll(const std::string& query, const std::map<std::string, std::string>& params)
-{
-     return search_->samSearchAll(query, params);
 }
 
 Response Client::sqlSearch(const std::string& collection_name, const std::string& sql,
