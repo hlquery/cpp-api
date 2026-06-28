@@ -26,9 +26,19 @@ Response System::health()
      return request_->execute("GET", "/health");
 }
 
+Response System::ready()
+{
+     return request_->execute("GET", "/ready");
+}
+
 Response System::status()
 {
      return request_->execute("GET", "/status");
+}
+
+Response System::query()
+{
+     return request_->execute("GET", "/query");
 }
 
 Response System::startup()
@@ -61,6 +71,16 @@ Response System::metricsJson()
      return request_->execute("GET", "/metrics.json");
 }
 
+Response System::metricsHistory()
+{
+     return request_->execute("GET", "/metrics-history");
+}
+
+Response System::metricsHistoryAlias()
+{
+     return request_->execute("GET", "/metrics/history");
+}
+
 Response System::connections()
 {
      return request_->execute("GET", "/connections");
@@ -84,6 +104,41 @@ Response System::docTotal()
 Response System::etc()
 {
      return request_->execute("GET", "/etc");
+}
+
+Response System::searchConfig()
+{
+     return request_->execute("GET", "/search-config");
+}
+
+Response System::cache()
+{
+     return request_->execute("GET", "/cache");
+}
+
+Response System::updateCounters(const std::map<std::string, std::string>& params)
+{
+     return request_->execute("GET", "/update-counters", nullptr, params);
+}
+
+Response System::updateCountersPost(const nlohmann::json& body)
+{
+     return request_->execute("POST", "/update-counters", body);
+}
+
+Response System::debugCounters()
+{
+     return request_->execute("GET", "/debug/counters");
+}
+
+Response System::repair(const std::map<std::string, std::string>& params)
+{
+     return request_->execute("GET", "/repair", nullptr, params);
+}
+
+Response System::repairPost(const nlohmann::json& body)
+{
+     return request_->execute("POST", "/repair", body);
 }
 
 Response System::sql(const std::string& sql, const std::map<std::string, std::string>& params)

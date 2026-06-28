@@ -173,7 +173,7 @@ std::string Request::buildUrl(const std::string& path, const std::map<std::strin
 
      if (!query_params.empty())
      {
-          url += "?";
+          url += (url.find('?') == std::string::npos) ? "?" : "&";
           bool first = true;
           for (const auto& param : query_params)
           {

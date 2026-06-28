@@ -35,6 +35,15 @@ Client::Client(const std::string& base_url, const std::map<std::string, std::str
      documents_ = std::make_shared<Documents>(request_);
      search_ = std::make_shared<Search>(request_, collections_);
      system_ = std::make_shared<System>(request_);
+     aliases_ = std::make_shared<Aliases>(request_);
+     overrides_ = std::make_shared<Overrides>(request_);
+     synonyms_ = std::make_shared<Synonyms>(request_);
+     stopwords_ = std::make_shared<Stopwords>(request_);
+     keys_ = std::make_shared<Keys>(request_);
+     users_ = std::make_shared<Users>(request_);
+     modules_ = std::make_shared<Modules>(request_);
+     presets_ = std::make_shared<Presets>(request_);
+     analytics_ = std::make_shared<Analytics>(request_);
 }
 
 void Client::setAuthToken(const std::string& token, const std::string& method)
@@ -52,9 +61,19 @@ Response Client::health()
      return system_->health();
 }
 
+Response Client::ready()
+{
+     return system_->ready();
+}
+
 Response Client::status()
 {
      return system_->status();
+}
+
+Response Client::query()
+{
+     return system_->query();
 }
 
 Response Client::startup()
@@ -82,6 +101,11 @@ Response Client::metricsJson()
      return system_->metricsJson();
 }
 
+Response Client::metricsHistory()
+{
+     return system_->metricsHistory();
+}
+
 Response Client::connections()
 {
      return system_->connections();
@@ -105,6 +129,41 @@ Response Client::docTotal()
 Response Client::etc()
 {
      return system_->etc();
+}
+
+Response Client::searchConfig()
+{
+     return system_->searchConfig();
+}
+
+Response Client::cache()
+{
+     return system_->cache();
+}
+
+Response Client::updateCounters(const std::map<std::string, std::string>& params)
+{
+     return system_->updateCounters(params);
+}
+
+Response Client::updateCountersPost(const nlohmann::json& body)
+{
+     return system_->updateCountersPost(body);
+}
+
+Response Client::debugCounters()
+{
+     return system_->debugCounters();
+}
+
+Response Client::repair(const std::map<std::string, std::string>& params)
+{
+     return system_->repair(params);
+}
+
+Response Client::repairPost(const nlohmann::json& body)
+{
+     return system_->repairPost(body);
 }
 
 Response Client::info()
@@ -192,6 +251,51 @@ std::shared_ptr<System> Client::system()
      return system_;
 }
 
+std::shared_ptr<Aliases> Client::aliases()
+{
+     return aliases_;
+}
+
+std::shared_ptr<Overrides> Client::overrides()
+{
+     return overrides_;
+}
+
+std::shared_ptr<Synonyms> Client::synonyms()
+{
+     return synonyms_;
+}
+
+std::shared_ptr<Stopwords> Client::stopwords()
+{
+     return stopwords_;
+}
+
+std::shared_ptr<Keys> Client::keys()
+{
+     return keys_;
+}
+
+std::shared_ptr<Users> Client::users()
+{
+     return users_;
+}
+
+std::shared_ptr<Modules> Client::modules()
+{
+     return modules_;
+}
+
+std::shared_ptr<Presets> Client::presets()
+{
+     return presets_;
+}
+
+std::shared_ptr<Analytics> Client::analytics()
+{
+     return analytics_;
+}
+
 Response Client::listCollections(int offset, int limit)
 {
      return collections_->list(offset, limit);
@@ -210,6 +314,11 @@ Response Client::getCollection(const std::string& name)
 Response Client::getCollectionFields(const std::string& name)
 {
      return collections_->getFields(name);
+}
+
+Response Client::getCollectionLanguage(const std::string& name)
+{
+     return collections_->getLanguage(name);
 }
 
 Response Client::copyCollection(const std::string& source_name, const std::string& target_name, int batch_size)
@@ -232,6 +341,27 @@ Response Client::getDocument(const std::string& collection_name, const std::stri
      return documents_->get(collection_name, document_id);
 }
 
+Response Client::exportDocuments(const std::string& collection_name, const std::map<std::string, std::string>& params)
+{
+     return documents_->exportDocuments(collection_name, params);
+}
+
+Response Client::facetCounts(const std::string& collection_name, const std::map<std::string, std::string>& params)
+{
+     return documents_->facetCounts(collection_name, params);
+}
+
+Response Client::maybe(const std::string& collection_name, const std::map<std::string, std::string>& params)
+{
+     return documents_->maybe(collection_name, params);
+}
+
+Response Client::documentContext(const std::string& collection_name, const std::string& document_id,
+                                 const std::map<std::string, std::string>& params)
+{
+     return documents_->context(collection_name, document_id, params);
+}
+
 std::shared_ptr<Search> Client::searchApi()
 {
      return search_;
@@ -240,6 +370,11 @@ std::shared_ptr<Search> Client::searchApi()
 Response Client::search(const std::string& collection_name, const std::map<std::string, std::string>& params)
 {
      return collections_->search(collection_name, params);
+}
+
+Response Client::searchPost(const std::string& collection_name, const nlohmann::json& body)
+{
+     return collections_->searchPost(collection_name, body);
 }
 
 Response Client::sqlSearch(const std::string& collection_name, const std::string& sql,
@@ -269,14 +404,34 @@ Response Client::vectorSearch(const std::string& collection_name, const std::map
      return collections_->vectorSearch(collection_name, params);
 }
 
+Response Client::vectorSearchPost(const std::string& collection_name, const nlohmann::json& body)
+{
+     return collections_->vectorSearchPost(collection_name, body);
+}
+
 Response Client::multiSearch(const std::vector<nlohmann::json>& searches)
 {
      return search_->multiSearch(searches);
 }
 
+Response Client::multiSearch(const std::map<std::string, std::string>& params)
+{
+     return search_->multiSearch(params);
+}
+
 MultiSearchResult Client::multiSearchStructured(const std::vector<nlohmann::json>& searches)
 {
      return search_->multiSearchStructured(searches);
+}
+
+Response Client::globalSearch(const std::map<std::string, std::string>& params)
+{
+     return search_->globalSearch(params);
+}
+
+Response Client::globalSearchPost(const nlohmann::json& body)
+{
+     return search_->globalSearchPost(body);
 }
 
 Response Client::executeRequest(const std::string& method, const std::string& path,

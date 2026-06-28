@@ -99,6 +99,14 @@ Response Search::search(const std::string& collection_name, const std::map<std::
      return request_->execute("GET", path);
 }
 
+Response Search::searchPost(const std::string& collection_name, const nlohmann::json& body)
+{
+     utils::validateCollectionName(collection_name);
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/search";
+     return request_->execute("POST", path, body);
+}
+
 Response Search::sql(const std::string& collection_name, const std::string& sql,
                      const std::map<std::string, std::string>& params)
 {
@@ -131,6 +139,35 @@ Response Search::multiSearch(const std::vector<nlohmann::json>& searches)
      return request_->execute("POST", "/multi_search", payload);
 }
 
+Response Search::multiSearch(const std::map<std::string, std::string>& params)
+{
+     return request_->execute("GET", "/multi_search", nullptr, params);
+}
+
+Response Search::globalSearch(const std::map<std::string, std::string>& params)
+{
+     std::map<std::string, std::string> query_params = params;
+
+     if (query_params.find("q") == query_params.end())
+     {
+          const auto like_it = query_params.find("like");
+          if (like_it != query_params.end())
+          {
+               query_params["q"] = like_it->second;
+               query_params.erase(like_it);
+          }
+     }
+
+     utils::validateSearchParams(query_params);
+
+     return request_->execute("GET", "/search", nullptr, query_params);
+}
+
+Response Search::globalSearchPost(const nlohmann::json& body)
+{
+     return request_->execute("POST", "/search", body);
+}
+
 Response Search::vectorSearch(const std::string& collection_name, const std::map<std::string, std::string>& params)
 {
      utils::validateCollectionName(collection_name);
@@ -146,6 +183,14 @@ Response Search::vectorSearch(const std::string& collection_name, const std::map
      }
 
      return request_->execute("GET", path);
+}
+
+Response Search::vectorSearchPost(const std::string& collection_name, const nlohmann::json& body)
+{
+     utils::validateCollectionName(collection_name);
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) + "/vector_search";
+     return request_->execute("POST", path, body);
 }
 
 SearchResult Search::searchStructured(const std::string& collection_name, const std::map<std::string, std::string>& params)

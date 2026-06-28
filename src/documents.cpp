@@ -121,4 +121,57 @@ Response Documents::deleteByFilter(const std::string& collection_name, const std
      return request_->execute("DELETE", path, nullptr, params);
 }
 
+Response Documents::updateByQuery(const std::string& collection_name, const nlohmann::json& body)
+{
+     utils::validateCollectionName(collection_name);
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/_update_by_query";
+     return request_->execute("POST", path, body);
+}
+
+Response Documents::deleteByQuery(const std::string& collection_name, const nlohmann::json& body)
+{
+     utils::validateCollectionName(collection_name);
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/_delete_by_query";
+     return request_->execute("POST", path, body);
+}
+
+Response Documents::facetCounts(const std::string& collection_name, const std::map<std::string, std::string>& params)
+{
+     utils::validateCollectionName(collection_name);
+     utils::validateSearchParams(params);
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/facet_counts";
+     return request_->execute("GET", path, nullptr, params);
+}
+
+Response Documents::exportDocuments(const std::string& collection_name, const std::map<std::string, std::string>& params)
+{
+     utils::validateCollectionName(collection_name);
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/export";
+     return request_->execute("GET", path, nullptr, params);
+}
+
+Response Documents::maybe(const std::string& collection_name, const std::map<std::string, std::string>& params)
+{
+     utils::validateCollectionName(collection_name);
+     utils::validateSearchParams(params);
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/maybe";
+     return request_->execute("GET", path, nullptr, params);
+}
+
+Response Documents::context(const std::string& collection_name, const std::string& document_id,
+                            const std::map<std::string, std::string>& params)
+{
+     utils::validateCollectionName(collection_name);
+     utils::validateDocumentId(document_id);
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) +
+                        "/documents/" + utils::urlEncode(document_id) + "/context";
+     return request_->execute("GET", path, nullptr, params);
+}
+
 }

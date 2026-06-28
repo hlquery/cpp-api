@@ -36,11 +36,14 @@ class Collections
      Response remove(const std::string& name);
      Response update(const std::string& name, const nlohmann::json& schema);
      Response getFields(const std::string& name);
+     Response getLanguage(const std::string& name);
      Response search(const std::string& name, const std::map<std::string, std::string>& params = {});
+     Response searchPost(const std::string& name, const nlohmann::json& body);
      SearchResult searchStructured(const std::string& name, const std::map<std::string, std::string>& params = {});
      Response sql(const std::string& name, const std::string& sql,
                   const std::map<std::string, std::string>& params = {});
      Response vectorSearch(const std::string& name, const std::map<std::string, std::string>& params = {});
+     Response vectorSearchPost(const std::string& name, const nlohmann::json& body);
      SearchResult vectorSearchStructured(const std::string& name, const std::map<std::string, std::string>& params = {});
 
      /* Utility helpers */

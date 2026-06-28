@@ -32,10 +32,15 @@ class Search
      Search(std::shared_ptr<Request> request, std::shared_ptr<Collections> collections);
 
      Response search(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response searchPost(const std::string& collection_name, const nlohmann::json& body);
      Response sql(const std::string& collection_name, const std::string& sql,
                   const std::map<std::string, std::string>& params = {});
      Response multiSearch(const std::vector<nlohmann::json>& searches);
+     Response multiSearch(const std::map<std::string, std::string>& params);
+     Response globalSearch(const std::map<std::string, std::string>& params = {});
+     Response globalSearchPost(const nlohmann::json& body);
      Response vectorSearch(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response vectorSearchPost(const std::string& collection_name, const nlohmann::json& body);
 
      SearchResult searchStructured(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
      MultiSearchResult multiSearchStructured(const std::vector<nlohmann::json>& searches);

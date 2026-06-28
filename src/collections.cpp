@@ -261,6 +261,14 @@ Response Collections::getFields(const std::string& name)
      return Response(200, result);
 }
 
+Response Collections::getLanguage(const std::string& name)
+{
+     utils::validateCollectionName(name);
+
+     std::string path = "/collections/" + utils::urlEncode(name) + "/lang";
+     return request_->execute("GET", path);
+}
+
 Response Collections::search(const std::string& name, const std::map<std::string, std::string>& params)
 {
      utils::validateCollectionName(name);
@@ -316,6 +324,14 @@ Response Collections::search(const std::string& name, const std::map<std::string
      return request_->execute("GET", path);
 }
 
+Response Collections::searchPost(const std::string& name, const nlohmann::json& body)
+{
+     utils::validateCollectionName(name);
+
+     std::string path = "/collections/" + utils::urlEncode(name) + "/documents/search";
+     return request_->execute("POST", path, body);
+}
+
 SearchResult Collections::searchStructured(const std::string& name, const std::map<std::string, std::string>& params)
 {
      return SearchResult(search(name, params));
@@ -358,6 +374,14 @@ Response Collections::vectorSearch(const std::string& name, const std::map<std::
      }
 
      return request_->execute("GET", path);
+}
+
+Response Collections::vectorSearchPost(const std::string& name, const nlohmann::json& body)
+{
+     utils::validateCollectionName(name);
+
+     std::string path = "/collections/" + utils::urlEncode(name) + "/vector_search";
+     return request_->execute("POST", path, body);
 }
 
 SearchResult Collections::vectorSearchStructured(const std::string& name, const std::map<std::string, std::string>& params)
