@@ -24,7 +24,7 @@ int main()
 
           /* List collections */
 
-          auto collections = client.listCollections(0, 10);
+          auto collections = client.collections()->list(0, 10);
           if (collections.isSuccess())
           {
                auto body = collections.getBody();

@@ -15,7 +15,7 @@
 
 ### What is the hlquery C++ API?
 
-The hlquery C++ API is the official C++ client for [hlquery](https://github.com/hlquery/hlquery). It wraps the server's HTTP/JSON interface in a small typed client with response helpers, auth support, SQL helpers, and system helpers.
+The hlquery C++ API is the official C++ client for [hlquery](https://github.com/hlquery/hlquery). It wraps the server's HTTP/JSON interface in a small typed client with response helpers, auth support, SQL helpers, and service objects for system, collections, documents, search, and administration routes.
 
 It is intended for native services, command-line tools, and applications that want direct hlquery access without manually assembling HTTP calls.
 
@@ -23,7 +23,7 @@ It is intended for native services, command-line tools, and applications that wa
 
 Use the C++ client when your application already lives close to hlquery and you want the search layer to feel native instead of like a pile of hand-built HTTP calls. The library keeps request setup, authentication, response parsing, and endpoint routing in one place, so application code can work with collections, documents, search, SQL, and system routes through one small client surface.
 
-It is still close to the server API. You get typed helpers for the common paths, but the raw request helper remains available for custom module routes or newer endpoints that have not yet grown a dedicated wrapper. That makes it useful for production services that want a stable integration point without losing access to hlquery's full HTTP surface.
+It is still close to the server API. The preferred style is to access endpoints through service objects, such as `client.system()->health()` and `client.collections()->list(0, 10)`. Compatibility shortcuts on `Client` remain available, and the raw request helper can still be used for custom module routes or newer endpoints that have not yet grown a dedicated wrapper. That makes it useful for production services that want a stable integration point without losing access to hlquery's full HTTP surface.
 
 ### Installation
 
@@ -88,7 +88,7 @@ client.clearAuth();
 
 ### System
 
-Use the system helper for operational routes that were added after the initial C++ client surface:
+Use the system helper for operational routes:
 
 ```cpp
 hlquery::Client client("http://localhost:9200");
@@ -101,6 +101,19 @@ auto storage = system->storageStatus();
 std::cout << status.getBody().dump(2) << std::endl;
 std::cout << metrics.getBody().dump(2) << std::endl;
 std::cout << storage.getBody().dump(2) << std::endl;
+```
+
+### Collections
+
+```cpp
+hlquery::Client client("http://localhost:9200");
+
+auto collections = client.collections();
+auto list = collections->list(0, 10);
+auto metadata = collections->get("products");
+
+std::cout << list.getBody().dump(2) << std::endl;
+std::cout << metadata.getBody().dump(2) << std::endl;
 ```
 
 ### SQL
@@ -121,7 +134,7 @@ Copy a collection (schema + all documents) into a new collection name:
 
 ```cpp
 hlquery::Client client("http://localhost:9200");
-auto result = client.copyCollection("source_collection", "target_collection");
+auto result = client.collections()->copy("source_collection", "target_collection");
 std::cout << result.getBody().dump(2) << std::endl;
 ```
 

@@ -84,7 +84,7 @@ int main()
           /* Step 3: Check collection count before flush */
 
           std::cout << "Step 3: Checking collection count before flush..." << std::endl;
-          auto collections_before = client.listCollections(0, 1000);
+          auto collections_before = client.collections()->list(0, 1000);
           int count_before = 0;
           if (collections_before.isSuccess())
           {
@@ -139,7 +139,7 @@ int main()
           /* Step 5: Re-check collection count after flush */
 
           std::cout << "Step 5: Checking collection count after flush..." << std::endl;
-          auto collections_after = client.listCollections(0, 1000);
+          auto collections_after = client.collections()->list(0, 1000);
           int count_after = -1;
           if (collections_after.isSuccess())
           {
