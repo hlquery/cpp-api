@@ -4,7 +4,7 @@
 
 <div align="center">
 
-**A modular C++ client library for hlquery, designed with a familiar and intuitive API structure.**
+**A modular C++ client library for hlquery with a familiar service-based API.**
 
 [![Follow hlquery](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white&labelColor=000000)](https://x.com/hlquery)
 [![cpp-api](https://img.shields.io/badge/GitHub-cpp--api-purple?logo=github&logoColor=white&labelColor=000000)](https://github.com/hlquery/cpp-api/)
@@ -17,15 +17,15 @@
 
 The hlquery C++ API is the official C++ client for [hlquery](https://github.com/hlquery/hlquery). It wraps the server's HTTP/JSON interface in a small typed client with response helpers, auth support, SQL helpers, and system helpers.
 
-It is intended for native services, command-line tools, and applications that want direct hlquery access without hand-rolling HTTP calls.
+It is intended for native services, command-line tools, and applications that want direct hlquery access without manually assembling HTTP calls.
 
 ### Why use it?
 
-Use the C++ client when your application already lives close to hlquery and you want the search layer to feel native instead of like a pile of hand-built HTTP calls. The library keeps request setup, auth, response parsing, and endpoint routing in one place, so application code can work with collections, documents, search, SQL, and system routes through one small client surface.
+Use the C++ client when your application already lives close to hlquery and you want the search layer to feel native instead of like a pile of hand-built HTTP calls. The library keeps request setup, authentication, response parsing, and endpoint routing in one place, so application code can work with collections, documents, search, SQL, and system routes through one small client surface.
 
 It is still close to the server API. You get typed helpers for the common paths, but the raw request helper remains available for custom module routes or newer endpoints that have not yet grown a dedicated wrapper. That makes it useful for production services that want a stable integration point without losing access to hlquery's full HTTP surface.
 
-### Install
+### Installation
 
 Build locally:
 
@@ -48,7 +48,7 @@ $ make OPENSSL=1
 
 Artifacts are written to `build/`.
 
-### Quick Start
+### Quick start
 
 ```cpp
 #include "hlquery/client.h"
@@ -76,7 +76,7 @@ int main() {
 }
 ```
 
-### Auth
+### Authentication
 
 ```cpp
 hlquery::Client client("http://localhost:9200");
@@ -125,7 +125,7 @@ auto result = client.copyCollection("source_collection", "target_collection");
 std::cout << result.getBody().dump(2) << std::endl;
 ```
 
-### Reduce Text Example
+### Custom Module Routes
 
 Use the raw request helper for custom module routes:
 
@@ -148,7 +148,7 @@ We welcome contributions from the community! All contributions must be released 
 
 ### How to Contribute
 
-- Check existing [C++ API issues](https://github.com/hlquery/cpp-api/issues) or create new ones
+- Check existing [C++ API issues](https://github.com/hlquery/cpp-api/issues) or open a new one
 - Contribute C++ client changes to [hlquery/cpp-api](https://github.com/hlquery/cpp-api)
 - Contribute shared server/API changes to [hlquery/hlquery](https://github.com/hlquery/hlquery)
 - Test and report bugs against the C++ client
