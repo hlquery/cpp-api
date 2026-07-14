@@ -106,6 +106,16 @@ Response Client::metricsHistory()
      return system_->metricsHistory();
 }
 
+Response Client::metricsHistoryAlias()
+{
+     return system_->metricsHistoryAlias();
+}
+
+Response Client::configFiles()
+{
+     return system_->configFiles();
+}
+
 Response Client::connections()
 {
      return system_->connections();
@@ -311,6 +321,21 @@ Response Client::getCollection(const std::string& name)
      return collections_->get(name);
 }
 
+Response Client::createCollection(const std::string& name, const nlohmann::json& schema)
+{
+     return collections_->create(name, schema);
+}
+
+Response Client::updateCollection(const std::string& name, const nlohmann::json& schema)
+{
+     return collections_->update(name, schema);
+}
+
+Response Client::deleteCollection(const std::string& name)
+{
+     return collections_->remove(name);
+}
+
 Response Client::getCollectionFields(const std::string& name)
 {
      return collections_->getFields(name);
@@ -341,9 +366,49 @@ Response Client::getDocument(const std::string& collection_name, const std::stri
      return documents_->get(collection_name, document_id);
 }
 
+Response Client::addDocument(const std::string& collection_name, const nlohmann::json& document)
+{
+     return documents_->add(collection_name, document);
+}
+
+Response Client::updateDocument(const std::string& collection_name, const std::string& document_id, const nlohmann::json& document)
+{
+     return documents_->update(collection_name, document_id, document);
+}
+
+Response Client::deleteDocument(const std::string& collection_name, const std::string& document_id)
+{
+     return documents_->remove(collection_name, document_id);
+}
+
+Response Client::importDocuments(const std::string& collection_name, const std::vector<nlohmann::json>& documents)
+{
+     return documents_->importDocuments(collection_name, documents);
+}
+
+Response Client::deleteDocumentsByFilter(const std::string& collection_name, const std::string& filter)
+{
+     return documents_->deleteByFilter(collection_name, filter);
+}
+
+Response Client::updateDocumentsByQuery(const std::string& collection_name, const nlohmann::json& body)
+{
+     return documents_->updateByQuery(collection_name, body);
+}
+
+Response Client::deleteDocumentsByQuery(const std::string& collection_name, const nlohmann::json& body)
+{
+     return documents_->deleteByQuery(collection_name, body);
+}
+
 Response Client::exportDocuments(const std::string& collection_name, const std::map<std::string, std::string>& params)
 {
      return documents_->exportDocuments(collection_name, params);
+}
+
+Response Client::exportDocumentsPost(const std::string& collection_name, const nlohmann::json& body)
+{
+     return documents_->exportDocumentsPost(collection_name, body);
 }
 
 Response Client::facetCounts(const std::string& collection_name, const std::map<std::string, std::string>& params)
@@ -351,9 +416,19 @@ Response Client::facetCounts(const std::string& collection_name, const std::map<
      return documents_->facetCounts(collection_name, params);
 }
 
+Response Client::facetCountsPost(const std::string& collection_name, const nlohmann::json& body)
+{
+     return documents_->facetCountsPost(collection_name, body);
+}
+
 Response Client::maybe(const std::string& collection_name, const std::map<std::string, std::string>& params)
 {
      return documents_->maybe(collection_name, params);
+}
+
+Response Client::maybePost(const std::string& collection_name, const nlohmann::json& body)
+{
+     return documents_->maybePost(collection_name, body);
 }
 
 Response Client::documentContext(const std::string& collection_name, const std::string& document_id,
@@ -407,6 +482,16 @@ Response Client::vectorSearch(const std::string& collection_name, const std::map
 Response Client::vectorSearchPost(const std::string& collection_name, const nlohmann::json& body)
 {
      return collections_->vectorSearchPost(collection_name, body);
+}
+
+Response Client::vectorSearchAlias(const std::string& collection_name, const std::map<std::string, std::string>& params)
+{
+     return collections_->vectorSearchAlias(collection_name, params);
+}
+
+Response Client::vectorSearchAliasPost(const std::string& collection_name, const nlohmann::json& body)
+{
+     return collections_->vectorSearchAliasPost(collection_name, body);
 }
 
 Response Client::multiSearch(const std::vector<nlohmann::json>& searches)

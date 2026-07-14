@@ -384,6 +384,22 @@ Response Collections::vectorSearchPost(const std::string& name, const nlohmann::
      return request_->execute("POST", path, body);
 }
 
+Response Collections::vectorSearchAlias(const std::string& name, const std::map<std::string, std::string>& params)
+{
+     utils::validateCollectionName(name);
+
+     std::string path = "/collections/" + utils::urlEncode(name) + "/search";
+     return request_->execute("GET", path, nullptr, params);
+}
+
+Response Collections::vectorSearchAliasPost(const std::string& name, const nlohmann::json& body)
+{
+     utils::validateCollectionName(name);
+
+     std::string path = "/collections/" + utils::urlEncode(name) + "/search";
+     return request_->execute("POST", path, body);
+}
+
 SearchResult Collections::vectorSearchStructured(const std::string& name, const std::map<std::string, std::string>& params)
 {
      return SearchResult(vectorSearch(name, params));

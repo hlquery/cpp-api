@@ -40,6 +40,7 @@ class System
      Response metricsJson();
      Response metricsHistory();
      Response metricsHistoryAlias();
+     Response configFiles();
      Response connections();
      Response rocksdb();
      Response rocksdbInternal();

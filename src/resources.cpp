@@ -119,6 +119,35 @@ Response Synonyms::remove(const std::string& collection_name, const std::string&
      return request_->execute("DELETE", collectionPath(collection_name, "/synonyms/") + utils::urlEncode(id));
 }
 
+Response Synonyms::listSet(const std::string& collection_name)
+{
+     return request_->execute("GET", collectionPath(collection_name, "/synonym_sets"));
+}
+
+Response Synonyms::getSet(const std::string& collection_name, const std::string& id)
+{
+     requireNonEmpty(id, "Synonym id");
+     return request_->execute("GET", collectionPath(collection_name, "/synonym_sets/") + utils::urlEncode(id));
+}
+
+Response Synonyms::createSet(const std::string& collection_name, const std::string& id, const nlohmann::json& body)
+{
+     requireNonEmpty(id, "Synonym id");
+     return request_->execute("POST", collectionPath(collection_name, "/synonym_sets/") + utils::urlEncode(id), body);
+}
+
+Response Synonyms::updateSet(const std::string& collection_name, const std::string& id, const nlohmann::json& body)
+{
+     requireNonEmpty(id, "Synonym id");
+     return request_->execute("PUT", collectionPath(collection_name, "/synonym_sets/") + utils::urlEncode(id), body);
+}
+
+Response Synonyms::removeSet(const std::string& collection_name, const std::string& id)
+{
+     requireNonEmpty(id, "Synonym id");
+     return request_->execute("DELETE", collectionPath(collection_name, "/synonym_sets/") + utils::urlEncode(id));
+}
+
 Response Synonyms::listAll()
 {
      return request_->execute("GET", "/synonyms");
@@ -154,6 +183,56 @@ Response Synonyms::removeGlobal(const std::string& id)
      return request_->execute("DELETE", encodedPath("/synonyms/global/", id, "Synonym id"));
 }
 
+Response Synonyms::listAllSets()
+{
+     return request_->execute("GET", "/synonym_sets");
+}
+
+Response Synonyms::listGlobalSet()
+{
+     return request_->execute("GET", "/synonym_sets/global");
+}
+
+Response Synonyms::getGlobalSet(const std::string& id)
+{
+     return request_->execute("GET", encodedPath("/synonym_sets/global/", id, "Synonym id"));
+}
+
+Response Synonyms::createGlobalSet(const std::string& id, const nlohmann::json& body)
+{
+     return request_->execute("POST", encodedPath("/synonym_sets/global/", id, "Synonym id"), body);
+}
+
+Response Synonyms::updateGlobalSet(const std::string& id, const nlohmann::json& body)
+{
+     return request_->execute("PUT", encodedPath("/synonym_sets/global/", id, "Synonym id"), body);
+}
+
+Response Synonyms::removeGlobalSet(const std::string& id)
+{
+     return request_->execute("DELETE", encodedPath("/synonym_sets/global/", id, "Synonym id"));
+}
+
+Response Synonyms::getGlobalSetItem(const std::string& id)
+{
+     return request_->execute("GET", encodedPath("/synonym_sets/global/items/", id, "Synonym id"));
+}
+
+Response Synonyms::createGlobalSetItem(const std::string& id, const nlohmann::json& body)
+{
+     return request_->execute("POST", encodedPath("/synonym_sets/global/items/", id, "Synonym id"), body);
+}
+
+Response Synonyms::updateGlobalSetItem(const std::string& id, const nlohmann::json& body)
+{
+     return request_->execute("PUT", encodedPath("/synonym_sets/global/items/", id, "Synonym id"), body);
+}
+
+Response Synonyms::removeGlobalSetItem(const std::string& id)
+{
+     return request_->execute("DELETE", encodedPath("/synonym_sets/global/items/", id, "Synonym id"));
+}
+
 Stopwords::Stopwords(std::shared_ptr<Request> request) : request_(request)
 {
 }
@@ -174,6 +253,22 @@ Response Stopwords::remove(const std::string& collection_name, const std::string
      return request_->execute("DELETE", collectionPath(collection_name, "/stopwords/") + utils::urlEncode(word));
 }
 
+Response Stopwords::listSet(const std::string& collection_name)
+{
+     return request_->execute("GET", collectionPath(collection_name, "/stopword_sets"));
+}
+
+Response Stopwords::createSet(const std::string& collection_name, const nlohmann::json& body)
+{
+     return request_->execute("POST", collectionPath(collection_name, "/stopword_sets"), body);
+}
+
+Response Stopwords::removeSet(const std::string& collection_name, const std::string& word)
+{
+     requireNonEmpty(word, "Stopword");
+     return request_->execute("DELETE", collectionPath(collection_name, "/stopword_sets/") + utils::urlEncode(word));
+}
+
 Response Stopwords::listAll()
 {
      return request_->execute("GET", "/stopwords");
@@ -192,6 +287,31 @@ Response Stopwords::createGlobal(const nlohmann::json& body)
 Response Stopwords::removeGlobal(const std::string& word)
 {
      return request_->execute("DELETE", encodedPath("/stopwords/global/", word, "Stopword"));
+}
+
+Response Stopwords::listAllSets()
+{
+     return request_->execute("GET", "/stopword_sets");
+}
+
+Response Stopwords::listGlobalSet()
+{
+     return request_->execute("GET", "/stopword_sets/global");
+}
+
+Response Stopwords::createGlobalSet(const nlohmann::json& body)
+{
+     return request_->execute("POST", "/stopword_sets/global", body);
+}
+
+Response Stopwords::removeGlobalSet(const std::string& word)
+{
+     return request_->execute("DELETE", encodedPath("/stopword_sets/global/", word, "Stopword"));
+}
+
+Response Stopwords::removeGlobalSetItem(const std::string& word)
+{
+     return request_->execute("DELETE", encodedPath("/stopword_sets/global/items/", word, "Stopword"));
 }
 
 Overrides::Overrides(std::shared_ptr<Request> request) : request_(request)
@@ -230,6 +350,74 @@ Response Overrides::remove(const std::string& collection_name, const std::string
 {
      requireNonEmpty(id, "Override id");
      return request_->execute("DELETE", collectionPath(collection_name, "/overrides/") + utils::urlEncode(id));
+}
+
+Response Overrides::listCurations(const std::string& collection_name)
+{
+     return request_->execute("GET", collectionPath(collection_name, "/curations"));
+}
+
+Response Overrides::getCuration(const std::string& collection_name, const std::string& id)
+{
+     requireNonEmpty(id, "Curation id");
+     return request_->execute("GET", collectionPath(collection_name, "/curations/") + utils::urlEncode(id));
+}
+
+Response Overrides::upsertCuration(const std::string& collection_name, const std::string& id, const nlohmann::json& body)
+{
+     return updateCuration(collection_name, id, body);
+}
+
+Response Overrides::createCuration(const std::string& collection_name, const std::string& id, const nlohmann::json& body)
+{
+     requireNonEmpty(id, "Curation id");
+     return request_->execute("POST", collectionPath(collection_name, "/curations/") + utils::urlEncode(id), body);
+}
+
+Response Overrides::updateCuration(const std::string& collection_name, const std::string& id, const nlohmann::json& body)
+{
+     requireNonEmpty(id, "Curation id");
+     return request_->execute("PUT", collectionPath(collection_name, "/curations/") + utils::urlEncode(id), body);
+}
+
+Response Overrides::removeCuration(const std::string& collection_name, const std::string& id)
+{
+     requireNonEmpty(id, "Curation id");
+     return request_->execute("DELETE", collectionPath(collection_name, "/curations/") + utils::urlEncode(id));
+}
+
+Response Overrides::listCurationSet(const std::string& collection_name)
+{
+     return request_->execute("GET", collectionPath(collection_name, "/curation_sets"));
+}
+
+Response Overrides::getCurationSet(const std::string& collection_name, const std::string& id)
+{
+     requireNonEmpty(id, "Curation id");
+     return request_->execute("GET", collectionPath(collection_name, "/curation_sets/") + utils::urlEncode(id));
+}
+
+Response Overrides::upsertCurationSet(const std::string& collection_name, const std::string& id, const nlohmann::json& body)
+{
+     return updateCurationSet(collection_name, id, body);
+}
+
+Response Overrides::createCurationSet(const std::string& collection_name, const std::string& id, const nlohmann::json& body)
+{
+     requireNonEmpty(id, "Curation id");
+     return request_->execute("POST", collectionPath(collection_name, "/curation_sets/") + utils::urlEncode(id), body);
+}
+
+Response Overrides::updateCurationSet(const std::string& collection_name, const std::string& id, const nlohmann::json& body)
+{
+     requireNonEmpty(id, "Curation id");
+     return request_->execute("PUT", collectionPath(collection_name, "/curation_sets/") + utils::urlEncode(id), body);
+}
+
+Response Overrides::removeCurationSet(const std::string& collection_name, const std::string& id)
+{
+     requireNonEmpty(id, "Curation id");
+     return request_->execute("DELETE", collectionPath(collection_name, "/curation_sets/") + utils::urlEncode(id));
 }
 
 Keys::Keys(std::shared_ptr<Request> request) : request_(request)
@@ -312,6 +500,16 @@ Response Modules::load(const std::string& name, const nlohmann::json& body)
 Response Modules::unload(const std::string& name, const nlohmann::json& body)
 {
      return request_->execute("POST", encodedPath("/unloadmodule/", name, "Module name"), body);
+}
+
+Response Modules::loadViaModules(const std::string& name, const nlohmann::json& body)
+{
+     return request_->execute("POST", encodedPath("/modules/load/", name, "Module name"), body);
+}
+
+Response Modules::unloadViaModules(const std::string& name, const nlohmann::json& body)
+{
+     return request_->execute("POST", encodedPath("/modules/unload/", name, "Module name"), body);
 }
 
 Response Modules::call(const std::string& method, const std::string& path, const nlohmann::json& body,

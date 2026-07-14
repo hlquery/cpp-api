@@ -39,8 +39,11 @@ class Documents
      Response updateByQuery(const std::string& collection_name, const nlohmann::json& body);
      Response deleteByQuery(const std::string& collection_name, const nlohmann::json& body);
      Response facetCounts(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response facetCountsPost(const std::string& collection_name, const nlohmann::json& body);
      Response exportDocuments(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response exportDocumentsPost(const std::string& collection_name, const nlohmann::json& body);
      Response maybe(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response maybePost(const std::string& collection_name, const nlohmann::json& body);
      Response context(const std::string& collection_name, const std::string& document_id,
                       const std::map<std::string, std::string>& params = {});
 

@@ -44,6 +44,8 @@ class Collections
                   const std::map<std::string, std::string>& params = {});
      Response vectorSearch(const std::string& name, const std::map<std::string, std::string>& params = {});
      Response vectorSearchPost(const std::string& name, const nlohmann::json& body);
+     Response vectorSearchAlias(const std::string& name, const std::map<std::string, std::string>& params = {});
+     Response vectorSearchAliasPost(const std::string& name, const nlohmann::json& body);
      SearchResult vectorSearchStructured(const std::string& name, const std::map<std::string, std::string>& params = {});
 
      /* Utility helpers */

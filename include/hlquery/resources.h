@@ -53,6 +53,11 @@ class Synonyms
      Response create(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
      Response update(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
      Response remove(const std::string& collection_name, const std::string& id);
+     Response listSet(const std::string& collection_name);
+     Response getSet(const std::string& collection_name, const std::string& id);
+     Response createSet(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
+     Response updateSet(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
+     Response removeSet(const std::string& collection_name, const std::string& id);
      Response listAll();
      Response listGlobal();
      Response getGlobal(const std::string& id);
@@ -60,6 +65,16 @@ class Synonyms
      Response createGlobal(const std::string& id, const nlohmann::json& body);
      Response updateGlobal(const std::string& id, const nlohmann::json& body);
      Response removeGlobal(const std::string& id);
+     Response listAllSets();
+     Response listGlobalSet();
+     Response getGlobalSet(const std::string& id);
+     Response createGlobalSet(const std::string& id, const nlohmann::json& body);
+     Response updateGlobalSet(const std::string& id, const nlohmann::json& body);
+     Response removeGlobalSet(const std::string& id);
+     Response getGlobalSetItem(const std::string& id);
+     Response createGlobalSetItem(const std::string& id, const nlohmann::json& body);
+     Response updateGlobalSetItem(const std::string& id, const nlohmann::json& body);
+     Response removeGlobalSetItem(const std::string& id);
 
    private:
 
@@ -75,10 +90,18 @@ class Stopwords
      Response list(const std::string& collection_name);
      Response create(const std::string& collection_name, const nlohmann::json& body);
      Response remove(const std::string& collection_name, const std::string& word);
+     Response listSet(const std::string& collection_name);
+     Response createSet(const std::string& collection_name, const nlohmann::json& body);
+     Response removeSet(const std::string& collection_name, const std::string& word);
      Response listAll();
      Response listGlobal();
      Response createGlobal(const nlohmann::json& body);
      Response removeGlobal(const std::string& word);
+     Response listAllSets();
+     Response listGlobalSet();
+     Response createGlobalSet(const nlohmann::json& body);
+     Response removeGlobalSet(const std::string& word);
+     Response removeGlobalSetItem(const std::string& word);
 
    private:
 
@@ -97,6 +120,18 @@ class Overrides
      Response create(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
      Response update(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
      Response remove(const std::string& collection_name, const std::string& id);
+     Response listCurations(const std::string& collection_name);
+     Response getCuration(const std::string& collection_name, const std::string& id);
+     Response upsertCuration(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
+     Response createCuration(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
+     Response updateCuration(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
+     Response removeCuration(const std::string& collection_name, const std::string& id);
+     Response listCurationSet(const std::string& collection_name);
+     Response getCurationSet(const std::string& collection_name, const std::string& id);
+     Response upsertCurationSet(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
+     Response createCurationSet(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
+     Response updateCurationSet(const std::string& collection_name, const std::string& id, const nlohmann::json& body);
+     Response removeCurationSet(const std::string& collection_name, const std::string& id);
 
    private:
 
@@ -147,6 +182,8 @@ class Modules
      Response syntax(const std::string& name);
      Response load(const std::string& name, const nlohmann::json& body = nlohmann::json::object());
      Response unload(const std::string& name, const nlohmann::json& body = nlohmann::json::object());
+     Response loadViaModules(const std::string& name, const nlohmann::json& body = nlohmann::json::object());
+     Response unloadViaModules(const std::string& name, const nlohmann::json& body = nlohmann::json::object());
      Response call(const std::string& method, const std::string& path, const nlohmann::json& body = nullptr,
                    const std::map<std::string, std::string>& query_params = {});
 

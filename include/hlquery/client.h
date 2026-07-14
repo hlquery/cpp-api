@@ -15,6 +15,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "collections.h"
 #include "documents.h"
@@ -60,6 +61,8 @@ class Client
      Response metrics();
      Response metricsJson();
      Response metricsHistory();
+     Response metricsHistoryAlias();
+     Response configFiles();
      Response connections();
      Response rocksdb();
      Response rocksdbInternal();
@@ -93,6 +96,9 @@ class Client
      Response listCollections(int offset = 0, int limit = 10);
      Response listCollectionsDistributed();
      Response getCollection(const std::string& name);
+     Response createCollection(const std::string& name, const nlohmann::json& schema);
+     Response updateCollection(const std::string& name, const nlohmann::json& schema);
+     Response deleteCollection(const std::string& name);
      Response getCollectionFields(const std::string& name);
      Response getCollectionLanguage(const std::string& name);
      Response copyCollection(const std::string& source_name, const std::string& target_name, int batch_size = 500);
@@ -102,9 +108,19 @@ class Client
      std::shared_ptr<Documents> documents();
      Response listDocuments(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
      Response getDocument(const std::string& collection_name, const std::string& document_id);
+     Response addDocument(const std::string& collection_name, const nlohmann::json& document);
+     Response updateDocument(const std::string& collection_name, const std::string& document_id, const nlohmann::json& document);
+     Response deleteDocument(const std::string& collection_name, const std::string& document_id);
+     Response importDocuments(const std::string& collection_name, const std::vector<nlohmann::json>& documents);
+     Response deleteDocumentsByFilter(const std::string& collection_name, const std::string& filter);
+     Response updateDocumentsByQuery(const std::string& collection_name, const nlohmann::json& body);
+     Response deleteDocumentsByQuery(const std::string& collection_name, const nlohmann::json& body);
      Response exportDocuments(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response exportDocumentsPost(const std::string& collection_name, const nlohmann::json& body);
      Response facetCounts(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response facetCountsPost(const std::string& collection_name, const nlohmann::json& body);
      Response maybe(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response maybePost(const std::string& collection_name, const nlohmann::json& body);
      Response documentContext(const std::string& collection_name, const std::string& document_id,
                               const std::map<std::string, std::string>& params = {});
 
@@ -125,6 +141,8 @@ class Client
      [[deprecated("Use client.collections()->vectorSearch(...) for collection-scoped vector searches.")]]
      Response vectorSearch(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
      Response vectorSearchPost(const std::string& collection_name, const nlohmann::json& body);
+     Response vectorSearchAlias(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
+     Response vectorSearchAliasPost(const std::string& collection_name, const nlohmann::json& body);
      Response multiSearch(const std::vector<nlohmann::json>& searches);
      Response multiSearch(const std::map<std::string, std::string>& params);
      MultiSearchResult multiSearchStructured(const std::vector<nlohmann::json>& searches);

@@ -41,14 +41,14 @@ int main()
                                                  {{"name", "content"}, {"type", "string"}},
                                                  {{"name", "value"}, {"type", "int"}}})}};
 
-          auto create_result = client.collections()->create(collection_name, schema);
+          auto create_result = client.createCollection(collection_name, schema);
           if (create_result.isSuccess())
           {
-               std::cout << "  ✓ Collection '" << collection_name << "' created successfully" << std::endl;
+               std::cout << "  OK Collection '" << collection_name << "' created successfully" << std::endl;
           }
           else
           {
-               std::cout << "  ✗ Failed to create collection: " << create_result.getStatusCode() << std::endl;
+               std::cout << "  ERROR Failed to create collection: " << create_result.getStatusCode() << std::endl;
                std::cout << "  Error: " << create_result.getBody().dump(2) << std::endl;
                return 1;
           }
@@ -68,14 +68,14 @@ int main()
                {"content", "This is a test document for flush example"},
                {"value", 42}};
 
-          auto add_result = client.documents()->add(collection_name, doc);
+          auto add_result = client.addDocument(collection_name, doc);
           if (add_result.isSuccess())
           {
-               std::cout << "  ✓ Document '" << doc_id << "' added successfully" << std::endl;
+               std::cout << "  OK Document '" << doc_id << "' added successfully" << std::endl;
           }
           else
           {
-               std::cout << "  ✗ Failed to add document: " << add_result.getStatusCode() << std::endl;
+               std::cout << "  ERROR Failed to add document: " << add_result.getStatusCode() << std::endl;
                std::cout << "  Error: " << add_result.getBody().dump(2) << std::endl;
           }
 
@@ -84,7 +84,7 @@ int main()
           /* Step 3: Check collection count before flush */
 
           std::cout << "Step 3: Checking collection count before flush..." << std::endl;
-          auto collections_before = client.collections()->list(0, 1000);
+          auto collections_before = client.listCollections(0, 1000);
           int count_before = 0;
           if (collections_before.isSuccess())
           {
@@ -95,13 +95,13 @@ int main()
                     std::cout << "  Collections before flush: " << count_before << std::endl;
                     if (count_before == 0)
                     {
-                         std::cout << "  ⚠ Warning: No collections found before flush" << std::endl;
+                         std::cout << "  Warning: No collections found before flush" << std::endl;
                     }
                }
           }
           else
           {
-               std::cout << "  ✗ Failed to list collections: " << collections_before.getStatusCode() << std::endl;
+               std::cout << "  ERROR Failed to list collections: " << collections_before.getStatusCode() << std::endl;
           }
 
           std::cout << std::endl;
@@ -118,7 +118,7 @@ int main()
                {
                     collections_deleted = body["collections_deleted"];
                }
-               std::cout << "  ✓ Flush completed successfully" << std::endl;
+               std::cout << "  OK Flush completed successfully" << std::endl;
                std::cout << "  Collections deleted: " << collections_deleted << std::endl;
                std::string message = "N/A";
                if (body.contains("message") && body["message"].is_string())
@@ -129,7 +129,7 @@ int main()
           }
           else
           {
-               std::cout << "  ✗ Flush failed: " << flush_result.getStatusCode() << std::endl;
+               std::cout << "  ERROR Flush failed: " << flush_result.getStatusCode() << std::endl;
                std::cout << "  Error: " << flush_result.getBody().dump(2) << std::endl;
                return 1;
           }
@@ -139,7 +139,7 @@ int main()
           /* Step 5: Re-check collection count after flush */
 
           std::cout << "Step 5: Checking collection count after flush..." << std::endl;
-          auto collections_after = client.collections()->list(0, 1000);
+          auto collections_after = client.listCollections(0, 1000);
           int count_after = -1;
           if (collections_after.isSuccess())
           {
@@ -151,17 +151,17 @@ int main()
 
                     if (count_after == 0)
                     {
-                         std::cout << "  ✓ SUCCESS: All collections have been flushed" << std::endl;
+                         std::cout << "  SUCCESS: All collections have been flushed" << std::endl;
                     }
                     else
                     {
-                         std::cout << "  ⚠ Warning: Expected 0 collections, but found " << count_after << std::endl;
+                         std::cout << "  Warning: Expected 0 collections, but found " << count_after << std::endl;
                     }
                }
           }
           else
           {
-               std::cout << "  ✗ Failed to list collections: " << collections_after.getStatusCode() << std::endl;
+               std::cout << "  ERROR Failed to list collections: " << collections_after.getStatusCode() << std::endl;
           }
 
           std::cout << std::endl;

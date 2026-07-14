@@ -146,12 +146,28 @@ Response Documents::facetCounts(const std::string& collection_name, const std::m
      return request_->execute("GET", path, nullptr, params);
 }
 
+Response Documents::facetCountsPost(const std::string& collection_name, const nlohmann::json& body)
+{
+     utils::validateCollectionName(collection_name);
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/facet_counts";
+     return request_->execute("POST", path, body);
+}
+
 Response Documents::exportDocuments(const std::string& collection_name, const std::map<std::string, std::string>& params)
 {
      utils::validateCollectionName(collection_name);
 
      std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/export";
      return request_->execute("GET", path, nullptr, params);
+}
+
+Response Documents::exportDocumentsPost(const std::string& collection_name, const nlohmann::json& body)
+{
+     utils::validateCollectionName(collection_name);
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/export";
+     return request_->execute("POST", path, body);
 }
 
 Response Documents::maybe(const std::string& collection_name, const std::map<std::string, std::string>& params)
@@ -161,6 +177,14 @@ Response Documents::maybe(const std::string& collection_name, const std::map<std
 
      std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/maybe";
      return request_->execute("GET", path, nullptr, params);
+}
+
+Response Documents::maybePost(const std::string& collection_name, const nlohmann::json& body)
+{
+     utils::validateCollectionName(collection_name);
+
+     std::string path = "/collections/" + utils::urlEncode(collection_name) + "/documents/maybe";
+     return request_->execute("POST", path, body);
 }
 
 Response Documents::context(const std::string& collection_name, const std::string& document_id,

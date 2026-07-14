@@ -81,6 +81,11 @@ Response System::metricsHistoryAlias()
      return request_->execute("GET", "/metrics/history");
 }
 
+Response System::configFiles()
+{
+     return request_->execute("GET", "/config-files");
+}
+
 Response System::connections()
 {
      return request_->execute("GET", "/connections");
