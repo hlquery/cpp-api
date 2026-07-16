@@ -148,6 +148,8 @@ class Client
      MultiSearchResult multiSearchStructured(const std::vector<nlohmann::json>& searches);
      Response globalSearch(const std::map<std::string, std::string>& params = {});
      Response globalSearchPost(const nlohmann::json& body);
+     Response searchAll(const std::map<std::string, std::string>& params = {});
+     Response searchAllPost(const nlohmann::json& body);
 
      /* Execute arbitrary request */
 

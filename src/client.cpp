@@ -519,6 +519,16 @@ Response Client::globalSearchPost(const nlohmann::json& body)
      return search_->globalSearchPost(body);
 }
 
+Response Client::searchAll(const std::map<std::string, std::string>& params)
+{
+     return search_->searchAll(params);
+}
+
+Response Client::searchAllPost(const nlohmann::json& body)
+{
+     return search_->searchAllPost(body);
+}
+
 Response Client::executeRequest(const std::string& method, const std::string& path,
                                 const nlohmann::json& body, const std::map<std::string, std::string>& query_params)
 {

@@ -168,6 +168,16 @@ Response Search::globalSearchPost(const nlohmann::json& body)
      return request_->execute("POST", "/search", body);
 }
 
+Response Search::searchAll(const std::map<std::string, std::string>& params)
+{
+     return globalSearch(params);
+}
+
+Response Search::searchAllPost(const nlohmann::json& body)
+{
+     return globalSearchPost(body);
+}
+
 Response Search::vectorSearch(const std::string& collection_name, const std::map<std::string, std::string>& params)
 {
      utils::validateCollectionName(collection_name);

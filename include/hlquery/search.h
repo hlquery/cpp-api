@@ -39,6 +39,8 @@ class Search
      Response multiSearch(const std::map<std::string, std::string>& params);
      Response globalSearch(const std::map<std::string, std::string>& params = {});
      Response globalSearchPost(const nlohmann::json& body);
+     Response searchAll(const std::map<std::string, std::string>& params = {});
+     Response searchAllPost(const nlohmann::json& body);
      Response vectorSearch(const std::string& collection_name, const std::map<std::string, std::string>& params = {});
      Response vectorSearchPost(const std::string& collection_name, const nlohmann::json& body);
 
